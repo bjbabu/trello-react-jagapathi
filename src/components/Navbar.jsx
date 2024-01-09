@@ -6,7 +6,7 @@ const Navbar = () => {
     <>
       <div
         id='navbar'
-        className=' relative z-10 w-dvw desktop: h-12 p-2 bg-white brdr-btm-color border-b border-solid flex items-center justify-between'
+        className=' relative z-10 w-dvw desktop: h-12 p-2 bg-inherit brdr-btm-color border-b border-solid flex items-center justify-between'
       >
         <a className='h-8 w-20 flex justify-center items-center'>
           <div className='logo'></div>

@@ -1,14 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Board from "./Board";
+import BoardShimmer from "./BoardShimmer";
 import CreateBoard from "./CreateBoard";
+import { Context } from "../App";
 
 const BoardsBody = () => {
   const id = import.meta.env.VITE_ID;
   const apiKey = import.meta.env.VITE_API_KEY;
   const apiToken = import.meta.env.VITE_API_TOKEN;
 
-  const [listOfBoards, setListOfBoards] = useState([]);
+  const [listOfBoards, setListOfBoards] = useContext(Context);
+
+  // const [listOfBoards, setListOfBoards] = useState([]);
   const [isCreateBoardVisible, setIsCreateBoardVisible] = useState(false);
 
   useEffect(() => {
@@ -64,40 +68,56 @@ const BoardsBody = () => {
                 <h3 className='font-semibold'>Trello Workspace</h3>
               </div>
               <div className=''>
-                <ul className=' flex flex-wrap'>
-                  {listOfBoards.map((board) => (
-                    <Board
-                      key={board.id}
-                      boardId={board.id}
-                      boardName={board.name}
-                      bgImage={board.prefs.backgroundImage}
-                      bgColor={board.prefs.backgroundColor}
-                    />
-                  ))}
-                  <li className=' relative mb-4'>
-                    <div
-                      className=' h-24 w-48 p-2 bg-slate-200 flex flex-col justify-center items-center rounded-md bg-cover bg-center'
-                      onClick={() => {
-                        setIsCreateBoardVisible(!isCreateBoardVisible);
-                      }}
-                    >
-                      <div className=' text-slate-600 font-normal'>
-                        {" "}
-                        Create new board
-                      </div>
-                      <div className='text-sm text-slate-600 '>
-                        {10 - listOfBoards.length} remaining
-                      </div>
-                    </div>
-
-                    {isCreateBoardVisible && (
-                      <CreateBoard
-                        isCreateBoardVisible={isCreateBoardVisible}
-                        setIsCreateBoardVisible={setIsCreateBoardVisible}
+                {listOfBoards.length !== 0 ? (
+                  <ul className=' flex flex-wrap'>
+                    {listOfBoards.map((board) => (
+                      <Board
+                        key={board.id}
+                        boardId={board.id}
+                        boardName={board.name}
+                        bgImage={board.prefs.backgroundImage}
+                        bgColor={board.prefs.backgroundColor}
                       />
-                    )}
-                  </li>
-                </ul>
+                    ))}
+                    <li className=' relative mb-4'>
+                      <div
+                        className=' h-24 w-48 p-2 bg-slate-200 flex flex-col justify-center items-center rounded-md bg-cover bg-center'
+                        onClick={() => {
+                          setIsCreateBoardVisible(!isCreateBoardVisible);
+                        }}
+                      >
+                        <div className=' text-slate-600 font-normal'>
+                          {" "}
+                          Create new board
+                        </div>
+                        <div className='text-sm text-slate-600 '>
+                          {10 - listOfBoards.length} remaining
+                        </div>
+                      </div>
+
+                      {isCreateBoardVisible && (
+                        <CreateBoard
+                          isCreateBoardVisible={isCreateBoardVisible}
+                          setIsCreateBoardVisible={setIsCreateBoardVisible}
+                        />
+                      )}
+                    </li>
+                  </ul>
+                ) : (
+                  <ul className=' flex flex-wrap gap-4'>
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                  </ul>
+                )}
               </div>
             </div>
           </div>
