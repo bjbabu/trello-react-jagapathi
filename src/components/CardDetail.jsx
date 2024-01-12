@@ -40,7 +40,7 @@ const CardDetail = (props) => {
   return (
     <>
       <div className='absolute z-20 w-dvw py-20 h-dvh bg-black/65 flex justify-center '>
-        <div className='z-30 w-4/12 min-h-full bg-slate-100 text-slate-700 -mt-10 rounded-md shadow-md shadow-slate-200/70 overflow-y-auto'>
+        <div className='w-4/12 z-10 min-h-full bg-slate-100 text-slate-700 -mt-10 rounded-md shadow-md shadow-slate-200/70 overflow-y-auto'>
           <header className='flex p-5 items-start'>
             <div className=' flex-grow-0 pt-1'>
               <svg
@@ -90,7 +90,7 @@ const CardDetail = (props) => {
             <div className='w-3/12 h-12'>
               <h4 className='text-xs font-semibold'>Add to card</h4>
               <div className=' text-slate-800 text-sm font-medium'>
-                <div className='relative p-1 bg-slate-200 rounded-md my-2 flex items-center cursor-pointer'>
+                <div className='p-1 bg-slate-200 rounded-md my-2 flex items-center cursor-pointer'>
                   <span
                     className='flex items-center'
                     onClick={() => {

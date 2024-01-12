@@ -25,7 +25,7 @@ const CheckListPop = (props) => {
   }
 
   return (
-    <div className='absolute ps-2 w-72 top-full bg-white rounded-md shadow-md'>
+    <div className='absolute ps-2 w-72 top-48 bg-white rounded-md shadow-md'>
       <header className=' h-10 flex items-center'>
         <h3 className=' flex-grow text-center'>Add checklist</h3>
         <div
