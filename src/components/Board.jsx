@@ -1,17 +1,11 @@
 /* eslint-disable react/prop-types */
-import { useNavigate } from "react-router-dom";
 
 const Board = (props) => {
-  const navigate = useNavigate();
-
-  const { boardId, boardName, bgImage, bgColor } = props;
+  const { boardName, bgImage, bgColor } = props;
 
   return (
     <li className='mb-4 mr-4 '>
       <div
-        onClick={() => {
-          navigate(`/boards/${boardId}`);
-        }}
         className=' h-24 w-48 p-2 flex flex-col justify-between rounded-md bg-cover bg-center'
         style={
           bgImage

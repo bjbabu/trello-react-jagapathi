@@ -4,40 +4,28 @@ import Board from "./Board";
 import BoardShimmer from "./BoardShimmer";
 import CreateBoard from "./CreateBoard";
 import { Context } from "../App";
+import { getBoards } from "./API";
+import { Link } from "react-router-dom";
 
 const BoardsBody = () => {
   const id = import.meta.env.VITE_ID;
-  const apiKey = import.meta.env.VITE_API_KEY;
-  const apiToken = import.meta.env.VITE_API_TOKEN;
 
-  const [listOfBoards, setListOfBoards] = useContext(Context);
+  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
+    useContext(Context);
 
-  // const [listOfBoards, setListOfBoards] = useState([]);
   const [isCreateBoardVisible, setIsCreateBoardVisible] = useState(false);
 
   useEffect(() => {
-    fetchData();
+    getBoards(id, handleData, setHandleError);
   }, []);
 
-  const fetchData = () => {
-    fetch(
-      `https://api.trello.com/1/members/${id}/boards?key=${apiKey}&token=${apiToken}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
-      }
-    )
-      .then((response) => {
-        console.log(`Response: ${response.status} ${response.statusText}`);
-        return response.json();
-      })
-      .then((json) => {
-        setListOfBoards(json);
-      })
-      .catch((err) => console.error(err));
-  };
+  function handleData(data) {
+    setListOfBoards(data);
+  }
+
+  if (handleError) {
+    return <div>{handleError}</div>;
+  }
 
   return (
     <>
@@ -71,13 +59,14 @@ const BoardsBody = () => {
                 {listOfBoards.length !== 0 ? (
                   <ul className=' flex flex-wrap'>
                     {listOfBoards.map((board) => (
-                      <Board
-                        key={board.id}
-                        boardId={board.id}
-                        boardName={board.name}
-                        bgImage={board.prefs.backgroundImage}
-                        bgColor={board.prefs.backgroundColor}
-                      />
+                      <Link key={board.id} to={`/boards/${board.id}`}>
+                        <Board
+                          key={board.id}
+                          boardName={board.name}
+                          bgImage={board.prefs.backgroundImage}
+                          bgColor={board.prefs.backgroundColor}
+                        />
+                      </Link>
                     ))}
                     <li className=' relative mb-4'>
                       <div

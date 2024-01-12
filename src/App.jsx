@@ -11,10 +11,13 @@ export const Context = React.createContext();
 
 function App() {
   const [listOfBoards, setListOfBoards] = useState([]);
+  const [handleError, setHandleError] = useState("");
 
   return (
     <>
-      <Context.Provider value={[listOfBoards, setListOfBoards]}>
+      <Context.Provider
+        value={[listOfBoards, setListOfBoards, handleError, setHandleError]}
+      >
         <Navbar />
         <Routes>
           <Route path='/' element={<BoardsBody />}></Route>

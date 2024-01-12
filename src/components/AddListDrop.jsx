@@ -1,5 +1,9 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import { useContext } from "react";
+import { Context } from "../App";
+import { creatingList } from "./API";
 
 const AddListDrop = (props) => {
   const { boardId, listsInBoard, setListsInBoard } = props;
@@ -7,29 +11,26 @@ const AddListDrop = (props) => {
   const apiKey = import.meta.env.VITE_API_KEY;
   const apiToken = import.meta.env.VITE_API_TOKEN;
 
+  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
+    useContext(Context);
+
   const [isDrop, setIsDrop] = useState(false);
   const [listName, setListName] = useState("");
 
-  function addingNewList() {
+  function handleData(data) {
     setIsDrop(!isDrop);
     setListName("");
-    fetch(
-      `https://api.trello.com/1/lists?name=${listName}&idBoard=${boardId}&key=${apiKey}&token=${apiToken}`,
-      {
-        method: "POST",
-      }
-    )
-      .then((res) => {
-        if (res.ok) return res.json();
-        throw new Error("Failed to create list");
-      })
-      .then((data) => setListsInBoard([...listsInBoard, data]));
+    setListsInBoard([...listsInBoard, data]);
+  }
+
+  if (handleError) {
+    return <div>{handleError}</div>;
   }
 
   return (
     <>
       <div
-        className=' w-72 bg-slate-100 p-1 rounded-md shadow-lg flex justify-center items-center'
+        className=' w-72 bg-slate-100 p-1 rounded-md shadow-lg flex justify-center items-center self-start flex-shrink-0'
         style={
           isDrop
             ? { height: "5rem", backgroundColor: "rgba(236,236,236,1)" }
@@ -51,7 +52,9 @@ const AddListDrop = (props) => {
               <button
                 className=' bg-blue-600 p-2 rounded-md m-1'
                 disabled={listName === ""}
-                onClick={addingNewList}
+                onClick={() => {
+                  creatingList(boardId, listName, handleData, setHandleError);
+                }}
               >
                 Add list
               </button>

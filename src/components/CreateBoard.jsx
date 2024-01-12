@@ -1,32 +1,21 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
+import { useContext } from "react";
 import { useState } from "react";
+import { createBoard } from "./API";
 import { useNavigate } from "react-router-dom";
+import { Context } from "../App";
 
 const CreateBoard = (props) => {
-  const apiKey = import.meta.env.VITE_API_KEY;
-  const apiToken = import.meta.env.VITE_API_TOKEN;
-
   const navigate = useNavigate();
   const { isCreateBoardVisible, setIsCreateBoardVisible } = props;
 
+  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
+    useContext(Context);
   const [boardName, setBoardName] = useState("");
 
-  function createBoardPost() {
-    setIsCreateBoardVisible(!isCreateBoardVisible);
-    fetch(
-      `https://api.trello.com/1/boards/?name=${boardName}&key=${apiKey}&token=${apiToken}`,
-      { method: "POST" }
-    )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error("Posting data failed");
-        }
-      })
-      .then((data) => {
-        navigate(`/boards/${data.id}`);
-      });
+  if (handleError) {
+    return <div>{handleError}</div>;
   }
 
   return (
@@ -74,7 +63,11 @@ const CreateBoard = (props) => {
               : { backgroundColor: "lightgray", color: "dimgray" }
           }
           disabled={boardName === ""}
-          onClick={createBoardPost}
+          onClick={() => {
+            createBoard(boardName, setHandleError).then((res) =>
+              navigate(`/boards/${res.data.id}`)
+            );
+          }}
         >
           Create
         </button>
