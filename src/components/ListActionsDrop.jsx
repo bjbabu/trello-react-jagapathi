@@ -3,26 +3,8 @@ import { useState } from "react";
 import { archivingListsOfABoard } from "./API";
 
 const ListActionsDrop = (props) => {
-  // const apiKey = import.meta.env.VITE_API_KEY;
-  // const apiToken = import.meta.env.VITE_API_TOKEN;
-
   const { listId, listActionDrop, setListActionDrop } = props;
   const [handleError, setHandleError] = useState("");
-
-  // function archivingList() {
-  //   fetch(
-  //     `https://api.trello.com/1/lists/${listId}/closed?key=${apiKey}&token=${apiToken}&value=true`,
-  //     {
-  //       method: "PUT",
-  //     }
-  //   )
-  //     .then((response) => {
-  //       console.log(`Response: ${response.status} ${response.statusText}`);
-  //       return response.text();
-  //     })
-  //     .then(() => setListActionDrop(!listActionDrop))
-  //     .catch((err) => console.error(err));
-  // }
 
   if (handleError) {
     return <div>Error while archiving the list!!!</div>;

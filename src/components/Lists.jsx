@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import List from "./List";
 import AddListDrop from "./AddListDrop";
 import CardDetail from "./CardDetail";
+import YourBoards from "./YourBoards";
 import { getListsOfABoard } from "./API";
 
 const Lists = () => {
@@ -19,17 +20,15 @@ const Lists = () => {
   const [cardNameInCardDetail, setCardNameInCardDetail] = useState("");
   const [listNameInCardDetail, setListNameInCardDetail] = useState("");
   const [isCardDetailVisible, setIsCardDetailVisible] = useState(false);
-  // const [listActionDropVisible, setListActionDropVisible] = useState(false);
-  const [board, setBoard] = useState("");
-  // let boardName;
 
+  const board = listOfBoards.filter((board) => {
+    return board.id === id;
+  });
+
+  if (board.length !== 0) {
+    console.log(board[0].prefs);
+  }
   useEffect(() => {
-    setBoard(
-      listOfBoards.filter((board) => {
-        return board.id === id;
-      })
-    );
-    // fetchLists();
     getListsOfABoard(id, handleData, setHandleError);
   }, [id]);
 
@@ -45,11 +44,26 @@ const Lists = () => {
     <>
       <div
         id='lists-body'
-        className='relative h-dvh w-dvw bg-pink-800 flex text-white overflow-y-hidden'
+        className='relative h-dvh w-dvw flex text-white bg-center bg-cover bg-no-repeat'
+        style={
+          board.length !== 0
+            ? {
+                backgroundColor: board[0].prefs.backgroundTopColor,
+                backgroundImage: `url(${board[0].prefs.backgroundImage})`,
+              }
+            : {}
+        }
       >
         <div
           id='side-navbar'
-          className=' z-10 desktop: w-2/12 flex flex-col justify-start'
+          className=' z-10 mt-12 desktop: w-2/12 flex flex-col justify-start'
+          style={
+            board.length !== 0
+              ? {
+                  backgroundColor: board[0].prefs.backgroundBottomColor,
+                }
+              : {}
+          }
         >
           <div className='flex items-center p-3 border-b desktop: h-14'>
             <div className=' text-xl bg-gradient-to-r from-emerald-700 to-emerald-500 text-white font-bold my-2 w-8 h-8 text-center rounded-md items-center'>
@@ -83,12 +97,31 @@ const Lists = () => {
               </div>
             </div>
           </div>
+          <div
+            id='your-boards'
+            className=' w-full flex flex-col justify-between'
+          >
+            <header className='flex justify-between items-center my-2'>
+              <h3 className='text-sm font-semibold'>Your boards</h3>{" "}
+              <span className=' text-2xl font-normal self-center'>+</span>
+            </header>
+            {listOfBoards.map((board) => (
+              <YourBoards
+                key={board.id}
+                urlId={id}
+                boardId={board.id}
+                boardName={board.name}
+                backgroundColor={board.prefs.backgroundColor}
+                backgroundImage={board.prefs.backgroundImage}
+              />
+            ))}
+          </div>
         </div>
         <div
           id='lists-container'
-          className='desktop: w-10/12 bg-pink-800 overflow-y-hidden'
+          className=' mt-12 desktop: w-10/12 overflow-y-hidden'
         >
-          <header className='desktop: h-14 bg-white bg-opacity-5 flex items-center'>
+          <header className='desktop: h-14 bg-black bg-opacity-5 backdrop-blur-sm flex items-center'>
             <div className='flex items-center'>
               {board.length !== 0 ? (
                 <h3 className='text-xl font-bold mx-5'>{board[0].name}</h3>
@@ -103,7 +136,15 @@ const Lists = () => {
           </header>
           <div
             id='lists'
-            className=' h-5/6 pt-2 ps-3 flex gap-4 bg-emerald-600 overflow-x-auto'
+            className=' desktop: h-5/6 pt-2 ps-3 flex gap-4 bg-transparent overflow-x-auto'
+            style={
+              board.length !== 0
+                ? {
+                    ...board[0].prefs,
+                    // backgroundImage: `url(${board[0].prefs.backgroundImage})`,
+                  }
+                : {}
+            }
           >
             {listsInBoard.map((list) => (
               <List

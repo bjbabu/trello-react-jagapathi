@@ -1,12 +1,32 @@
+/* eslint-disable no-unused-vars */
+import { useContext } from "react";
+import { Context } from "../App";
 import { Button } from "@mui/material";
 import { Avatar } from "@mui/material";
+import { useParams } from "react-router-dom";
 
 const Navbar = () => {
+  const { id } = useParams();
+  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
+    useContext(Context);
+
+  const board = listOfBoards.filter((board) => {
+    return board.id === id;
+  });
+
   return (
     <>
       <div
         id='navbar'
-        className=' relative z-10 w-dvw desktop: h-12 p-2 bg-inherit brdr-btm-color border-b border-solid flex items-center justify-between'
+        className=' absolute z-10 w-dvw desktop: h-12 p-2 bg-white brdr-btm-color border-b border-solid flex items-center justify-between'
+        style={
+          board.length !== 0
+            ? {
+                ...board[0].prefs,
+                backgroundColor: board[0].prefs.backgroundTopColor,
+              }
+            : {}
+        }
       >
         <a className='h-8 w-20 flex justify-center items-center'>
           <div className='logo'></div>

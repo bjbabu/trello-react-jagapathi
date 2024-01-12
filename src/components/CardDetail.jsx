@@ -39,8 +39,8 @@ const CardDetail = (props) => {
 
   return (
     <>
-      <div className='absolute z-20 w-dvw h-dvh bg-black/65 flex justify-center items-center'>
-        <div className='z-20 w-4/12 h-5/6 bg-slate-100 text-slate-700 -mt-10 rounded-md shadow-md shadow-slate-200/70'>
+      <div className='absolute z-20 w-dvw py-20 h-dvh bg-black/65 flex justify-center '>
+        <div className='z-30 w-4/12 min-h-full bg-slate-100 text-slate-700 -mt-10 rounded-md shadow-md shadow-slate-200/70 overflow-y-auto'>
           <header className='flex p-5 items-start'>
             <div className=' flex-grow-0 pt-1'>
               <svg

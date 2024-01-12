@@ -1,27 +1,18 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import Board from "./Board";
 import BoardShimmer from "./BoardShimmer";
 import CreateBoard from "./CreateBoard";
 import { Context } from "../App";
-import { getBoards } from "./API";
+
 import { Link } from "react-router-dom";
 
 const BoardsBody = () => {
-  const id = import.meta.env.VITE_ID;
-
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
 
   const [isCreateBoardVisible, setIsCreateBoardVisible] = useState(false);
-
-  useEffect(() => {
-    getBoards(id, handleData, setHandleError);
-  }, []);
-
-  function handleData(data) {
-    setListOfBoards(data);
-  }
 
   if (handleError) {
     return <div>{handleError}</div>;
@@ -30,7 +21,7 @@ const BoardsBody = () => {
   return (
     <>
       <div className='relative desktop: w-dvw h-dvh flex justify-center'>
-        <div id='side-navbar' className=' mt-24 w-64 px-4'>
+        <div id='side-navbar' className=' mt-32 w-64 px-4'>
           <div>
             <ul>
               <li className='flex h-10 bg-blue-300 items-center rounded-md text-blue-700 font-semibold'>
@@ -45,7 +36,7 @@ const BoardsBody = () => {
             </ul>
           </div>
         </div>
-        <div id='boards-bar' className='w-7/12 mt-24 mx-4 flex flex-wrap'>
+        <div id='boards-bar' className='w-7/12 mt-32 mx-4 flex flex-wrap'>
           <div>
             <h3 className=' text-slate-600 font-semibold'>YOUR WORKSPACES</h3>
             <div>
