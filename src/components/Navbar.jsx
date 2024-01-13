@@ -34,18 +34,18 @@ const Navbar = () => {
           </a>
         </Link>
         <div>
-          <div>
+          {/* <div>
             <Button
               className=' bg-blue-600 text-sm font-bold capitalize'
               variant='contained'
             >
               Create
             </Button>
-          </div>
+          </div> */}
         </div>
 
         <div className='flex items-center'>
-          <div className=' flex items-center'>
+          {/* <div className=' flex items-center'>
             <svg width='16' height='16' viewBox='0 0 24 24' role='presentation'>
               <path
                 d='M16.436 15.085l3.94 4.01a1 1 0 01-1.425 1.402l-3.938-4.006a7.5 7.5 0 111.423-1.406zM10.5 16a5.5 5.5 0 100-11 5.5 5.5 0 000 11z'
@@ -58,7 +58,7 @@ const Navbar = () => {
               placeholder='Search'
               className='h-7 border-2 outline-none rounded-md'
             ></input>
-          </div>
+          </div> */}
           <div>
             <Avatar className=' bg-orange-600 h-6 w-6 m-2 text-xs'>Jb</Avatar>
           </div>
