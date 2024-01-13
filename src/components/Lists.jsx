@@ -25,9 +25,6 @@ const Lists = () => {
     return board.id === id;
   });
 
-  if (board.length !== 0) {
-    console.log(board[0].prefs);
-  }
   useEffect(() => {
     getListsOfABoard(id, handleData, setHandleError);
   }, [id]);

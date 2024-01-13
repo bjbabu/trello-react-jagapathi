@@ -160,8 +160,7 @@ export function gettingChecklistsInACard(cardId, handleData, setHandleError) {
 export function creatingCheckListsInACard(
   cardId,
   checkListName,
-  listOfCheckLists,
-  setListOfCheckLists,
+  handleCheckListCreation,
   setIsCheckListPopVisible,
   setCheckListName,
   setHandleError
@@ -171,9 +170,7 @@ export function creatingCheckListsInACard(
       `https://api.trello.com/1/cards/${cardId}/checklists?key=${apiKey}&token=${apiToken}&name=${checkListName}`
     )
     .then((res) => {
-      let temp = [...listOfCheckLists];
-      temp.push(res.data);
-      setListOfCheckLists(temp);
+      handleCheckListCreation(res.data);
       setCheckListName("Checklist");
       setIsCheckListPopVisible(false);
     })
@@ -224,18 +221,15 @@ export function gettingCheckItems(checkListId, handleData, setHandleError) {
 export function creatingCheckItems(
   checkListId,
   checkItemName,
-  setCheckItemName,
-  handleChange,
-  setHandleChange,
+  handleCreatingCheckItem,
   setHandleError
 ) {
   axios
     .post(
       `https://api.trello.com/1/checklists/${checkListId}/checkItems?name=${checkItemName}&key=${apiKey}&token=${apiToken}`
     )
-    .then(() => {
-      setCheckItemName("");
-      setHandleChange(!handleChange);
+    .then((res) => {
+      handleCreatingCheckItem(res.data);
     })
     .catch((err) => {
       console.log(err);
@@ -248,8 +242,9 @@ export function creatingCheckItems(
 export function deletingCheckItem(
   checkListId,
   itemId,
-  handleChange,
-  setHandleChange,
+  // handleChange,
+  // setHandleChange,
+  handleDeleteCheckItem,
   setHandleError
 ) {
   axios
@@ -257,7 +252,8 @@ export function deletingCheckItem(
       `https://api.trello.com/1/checklists/${checkListId}/checkItems/${itemId}?key=${apiKey}&token=${apiToken}`
     )
     .then(() => {
-      setHandleChange(!handleChange);
+      handleDeleteCheckItem(itemId);
+      // setHandleChange(!handleChange);
     })
     .catch((err) => {
       console.log(err);

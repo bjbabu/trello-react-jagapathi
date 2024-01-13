@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { Context } from "../App";
 import { Button } from "@mui/material";
 import { Avatar } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const Navbar = () => {
   const { id } = useParams();
@@ -28,9 +28,11 @@ const Navbar = () => {
             : {}
         }
       >
-        <a className='h-8 w-20 flex justify-center items-center'>
-          <div className='logo'></div>
-        </a>
+        <Link to={"/boards"}>
+          <a className='h-8 w-20 flex justify-center items-center'>
+            <div className='logo'></div>
+          </a>
+        </Link>
         <div>
           <div>
             <Button

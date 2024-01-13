@@ -8,8 +8,7 @@ import { creatingCheckListsInACard } from "./API";
 
 const CheckListPop = (props) => {
   const {
-    listOfCheckLists,
-    setListOfCheckLists,
+    handleCheckListCreation,
     cardIdForCardDetail,
     checkListName,
     setCheckListName,
@@ -42,9 +41,11 @@ const CheckListPop = (props) => {
           <label className='text-xs font-medium'>Title</label>
           <div className='my-2 pe-2'>
             <input
+              autoFocus
               type='text'
               placeholder='Checklist'
               className='w-full h-9 p-2 border-2 border-slate-400 rounded-md text-sm outline-none focus:border-blue-600'
+              disabled={checkListName === "" || checkListName.trim() === ""}
               value={checkListName}
               onChange={(e) => {
                 setCheckListName(e.target.value);
@@ -59,8 +60,7 @@ const CheckListPop = (props) => {
             creatingCheckListsInACard(
               cardIdForCardDetail,
               checkListName,
-              listOfCheckLists,
-              setListOfCheckLists,
+              handleCheckListCreation,
               setIsCheckListPopVisible,
               setCheckListName,
               setHandleError

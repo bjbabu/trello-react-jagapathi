@@ -1,11 +1,26 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useReducer } from "react";
 import { Context } from "../App";
 import CheckListPop from "./CheckListPop";
 import CheckListBody from "./CheckListBody";
 import { deletingACardInAList, gettingChecklistsInACard } from "./API";
+
+const reducer = (listOfCheckLists, action) => {
+  switch (action.type) {
+    case "GET":
+      return [...action.payload.checkListsData];
+    case "POST":
+      return [...listOfCheckLists, action.payload.addedChecklist];
+    case "DELETE": {
+      const filteredData = listOfCheckLists.filter((checklist) => {
+        return checklist.id !== action.payload.checkListId;
+      });
+      return filteredData;
+    }
+  }
+};
 
 const CardDetail = (props) => {
   const {
@@ -19,17 +34,29 @@ const CardDetail = (props) => {
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
 
+  const [listOfCheckLists, checkListsDispatch] = useReducer(reducer, []);
+
   const [isCheckListPopVisible, setIsCheckListPopVisible] = useState(false);
-  const [listOfCheckLists, setListOfCheckLists] = useState([]);
   const [checkListName, setCheckListName] = useState("Checklist");
-  const [handleCheckListDelete, setHandleCheckListDelete] = useState("");
+  // const [handleCheckListDelete, setHandleCheckListDelete] = useState("");
 
   useEffect(() => {
     gettingChecklistsInACard(cardIdForCardDetail, handleData, setHandleError);
-  }, [cardIdForCardDetail, handleCheckListDelete]);
+  }, []);
 
   function handleData(data) {
-    setListOfCheckLists(data);
+    checkListsDispatch({ type: "GET", payload: { checkListsData: data } });
+  }
+
+  function handleCheckListCreation(data) {
+    checkListsDispatch({ type: "POST", payload: { addedChecklist: data } });
+  }
+
+  function handleCheckListDelete(checkListId) {
+    checkListsDispatch({
+      type: "DELETE",
+      payload: { checkListId: checkListId },
+    });
   }
 
   if (handleError) {
@@ -82,7 +109,7 @@ const CardDetail = (props) => {
                   cardIdForCardDetail={cardIdForCardDetail}
                   checkListId={checklist.id}
                   checkListName={checklist.name}
-                  setHandleCheckListDelete={setHandleCheckListDelete}
+                  handleCheckListDelete={handleCheckListDelete}
                 />
               ))}
             </div>
@@ -117,9 +144,7 @@ const CardDetail = (props) => {
 
                   {isCheckListPopVisible ? (
                     <CheckListPop
-                      // addCheckLists={addCheckLists}
-                      listOfCheckLists={listOfCheckLists}
-                      setListOfCheckLists={setListOfCheckLists}
+                      handleCheckListCreation={handleCheckListCreation}
                       cardIdForCardDetail={cardIdForCardDetail}
                       checkListName={checkListName}
                       setCheckListName={setCheckListName}

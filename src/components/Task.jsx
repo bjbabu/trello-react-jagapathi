@@ -13,18 +13,18 @@ const Task = (props) => {
     itemId,
     taskName,
     taskState,
-    handleChange,
     setTotalCheckedItems,
-    setHandleChange,
+    handleDeleteCheckItem,
+    handleUpdateCheckItem,
   } = props;
 
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
-  const [taskStatus, setTaskStatus] = useState(taskState);
+  // const [taskStatus, setTaskStatus] = useState(taskState);
 
   useEffect(() => {
-    updatingCheckItem(cardIdForCardDetail, itemId, taskStatus, setHandleError);
-  }, [taskStatus]);
+    updatingCheckItem(cardIdForCardDetail, itemId, taskState, setHandleError);
+  }, [taskState]);
 
   if (handleError) {
     return <div>{handleError}</div>;
@@ -33,18 +33,17 @@ const Task = (props) => {
   return (
     <div className='ps-2 flex items-center my-2 '>
       <input
-        defaultChecked={taskStatus === "complete" ? true : false}
+        defaultChecked={taskState === "complete" ? true : false}
         type='checkbox'
         name=''
         id=''
-        className=' w-4 h-4 flex-grow-0'
+        className=' w-4 h-4 flex-grow-0 cursor-pointer'
         onClick={() => {
-          if (taskStatus === "complete") {
+          handleUpdateCheckItem(itemId);
+          if (taskState === "complete") {
             setTotalCheckedItems((val) => val - 1);
-            setTaskStatus("incomplete");
           } else {
             setTotalCheckedItems((val) => val + 1);
-            setTaskStatus("complete");
           }
         }}
       />
@@ -55,7 +54,7 @@ const Task = (props) => {
         <div
           className='w-full text-black font-light'
           style={
-            taskStatus === "complete"
+            taskState === "complete"
               ? { textDecoration: "line-through" }
               : { textDecoration: "none" }
           }
@@ -68,8 +67,9 @@ const Task = (props) => {
             deletingCheckItem(
               checkListId,
               itemId,
-              handleChange,
-              setHandleChange,
+              // handleChange,
+              // setHandleChange,
+              handleDeleteCheckItem,
               setHandleError
             );
           }}

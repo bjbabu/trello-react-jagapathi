@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useContext } from "react";
 import { Context } from "../App";
 import Task from "./Task";
@@ -11,34 +11,85 @@ import {
   creatingCheckItems,
 } from "./API";
 
+const reducer = (checkItemsList, action) => {
+  switch (action.type) {
+    case "GET": {
+      return [...action.payload.checkItemsData];
+    }
+    case "POST":
+      return [...checkItemsList, action.payload.createdCheckItem];
+    case "UPDATE": {
+      const data = checkItemsList.map((checkItem) => {
+        if (checkItem.id === action.payload.checkItemId) {
+          if (checkItem.state === "complete") {
+            return { ...checkItem, state: "incomplete" };
+          } else {
+            return { ...checkItem, state: "complete" };
+          }
+        } else {
+          return checkItem;
+        }
+      });
+      return data;
+    }
+    case "DELETE": {
+      const data = checkItemsList.filter((checkItem) => {
+        return checkItem.id !== action.payload.dleteCheckItemId;
+      });
+
+      return data;
+    }
+  }
+};
+
 const CheckListBody = (props) => {
   const {
     cardIdForCardDetail,
     checkListId,
     checkListName,
-    setHandleCheckListDelete,
+    handleCheckListDelete,
   } = props;
+
+  const [checkItemsList, dispatchCheckItems] = useReducer(reducer, []);
 
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
 
   const [isTaskAddVisible, setIsTaskAddVisible] = useState(true);
-  const [checkItemsList, setCheckItemsList] = useState([]);
   const [checkItemName, setCheckItemName] = useState("");
   const [totalCheckedItems, setTotalCheckedItems] = useState(0);
-  const [handleChange, setHandleChange] = useState(false);
 
   useEffect(() => {
-    gettingCheckItems(checkListId, handleData, setHandleError);
-  }, [checkListId, handleChange]);
+    gettingCheckItems(checkListId, handleGetData, setHandleError);
+  }, [checkListId]);
 
-  function handleData(data) {
+  function handleGetData(data) {
     setTotalCheckedItems(0);
-    setCheckItemsList(data);
     data.map((checkItem) => {
       if (checkItem.state === "complete") {
         setTotalCheckedItems((val) => val + 1);
       }
+    });
+
+    dispatchCheckItems({
+      type: "GET",
+      payload: { checkItemsData: data },
+    });
+  }
+
+  function handleCreatingCheckItem(data) {
+    setCheckItemName("");
+    dispatchCheckItems({ type: "POST", payload: { createdCheckItem: data } });
+  }
+
+  function handleDeleteCheckItem(data) {
+    dispatchCheckItems({ type: "DELETE", payload: { dleteCheckItemId: data } });
+  }
+
+  function handleUpdateCheckItem(data) {
+    dispatchCheckItems({
+      type: "UPDATE",
+      payload: { checkItemId: data },
     });
   }
 
@@ -47,7 +98,6 @@ const CheckListBody = (props) => {
     width = (totalCheckedItems / checkItemsList.length) * 100;
     width = Math.floor(width);
     width = width + "%";
-    console.log(width);
   }
 
   if (handleError) {
@@ -80,7 +130,7 @@ const CheckListBody = (props) => {
           onClick={() => {
             deletingCheckListInACard(
               checkListId,
-              setHandleCheckListDelete,
+              handleCheckListDelete,
               setHandleError
             );
           }}
@@ -101,7 +151,7 @@ const CheckListBody = (props) => {
               style={
                 width === "100%"
                   ? { width: `${width}`, backgroundColor: "green" }
-                  : { width: `${width}`, backgroundColor: "blue" }
+                  : { width: `${width}`, backgroundColor: "rgb(21, 120, 205)" }
               }
             ></div>
           ) : (
@@ -119,9 +169,9 @@ const CheckListBody = (props) => {
             itemId={checkItem.id}
             taskName={checkItem.name}
             taskState={checkItem.state}
-            handleChange={handleChange}
             setTotalCheckedItems={setTotalCheckedItems}
-            setHandleChange={setHandleChange}
+            handleDeleteCheckItem={handleDeleteCheckItem}
+            handleUpdateCheckItem={handleUpdateCheckItem}
           />
         ))}
       </div>
@@ -129,6 +179,7 @@ const CheckListBody = (props) => {
       {isTaskAddVisible ? (
         <div className='mx-8 w-11/12'>
           <textarea
+            autoFocus
             // cols='45'
             rows='2'
             placeholder='Add an item'
@@ -140,15 +191,13 @@ const CheckListBody = (props) => {
           ></textarea>
           <div>
             <button
-              disabled={checkItemName === ""}
+              disabled={checkItemName === "" || checkItemName.trim() === ""}
               className='bg-blue-500 px-2 py-1 text-white text-sm font-medium rounded'
               onClick={() => {
                 creatingCheckItems(
                   checkListId,
                   checkItemName,
-                  setCheckItemName,
-                  handleChange,
-                  setHandleChange,
+                  handleCreatingCheckItem,
                   setHandleError
                 );
               }}

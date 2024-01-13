@@ -6,7 +6,7 @@ const Board = (props) => {
   return (
     <li className='mb-4 mr-4 '>
       <div
-        className=' h-24 w-48 p-2 flex flex-col justify-between rounded-md bg-cover bg-center'
+        className='h-24 w-48 p-2 flex flex-col justify-between rounded-md bg-cover bg-center'
         style={
           bgImage
             ? {
@@ -17,7 +17,7 @@ const Board = (props) => {
         }
       >
         <div className=' text-white font-medium'>{boardName}</div>
-        <div>Star</div>
+        {/* <div className='hover-animate-star'>Star</div> */}
       </div>
     </li>
   );

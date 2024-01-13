@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useState } from "react";
 import { createBoard } from "./API";
 import { useNavigate } from "react-router-dom";
@@ -44,8 +44,9 @@ const CreateBoard = (props) => {
           Board Title <span className='text-red-500'>*</span>
         </label>
         <input
+          autoFocus
           type='text'
-          className=' w-full h-8 border-2 border-red-500 rounded-md'
+          className=' w-full h-8 border-2 border-red-500 rounded-md fouc'
           value={boardName}
           onChange={(e) => {
             setBoardName(e.target.value);
@@ -58,11 +59,11 @@ const CreateBoard = (props) => {
         <button
           className='w-full h-8 bg-slate-200 text-slate-500 rounded-md'
           style={
-            boardName
+            boardName.trim()
               ? { backgroundColor: "blue", color: "white" }
               : { backgroundColor: "lightgray", color: "dimgray" }
           }
-          disabled={boardName === ""}
+          disabled={boardName === "" || boardName.trim() === ""}
           onClick={() => {
             createBoard(boardName, setHandleError).then((res) =>
               navigate(`/boards/${res.data.id}`)

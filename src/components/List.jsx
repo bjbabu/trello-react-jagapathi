@@ -87,6 +87,7 @@ const List = (props) => {
           {isAddCardDrop ? (
             <div className=' w-full'>
               <textarea
+                autoFocus
                 name=''
                 id=''
                 rows={3}
@@ -100,7 +101,7 @@ const List = (props) => {
               <div>
                 <button
                   className=' bg-blue-600 px-2 py-1 text-white text-sm font-medium rounded-md focus:clear-none'
-                  disabled={cardName === ""}
+                  disabled={cardName === "" || cardName.trim() === ""}
                   onClick={() => {
                     creatingCardsInAList(
                       listId,

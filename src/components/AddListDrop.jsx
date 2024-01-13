@@ -1,15 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useContext } from "react";
 import { Context } from "../App";
 import { creatingList } from "./API";
 
 const AddListDrop = (props) => {
   const { boardId, listsInBoard, setListsInBoard } = props;
-
-  const apiKey = import.meta.env.VITE_API_KEY;
-  const apiToken = import.meta.env.VITE_API_TOKEN;
 
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
@@ -40,6 +37,7 @@ const AddListDrop = (props) => {
         {isDrop ? (
           <div>
             <input
+              autoFocus
               type='text'
               placeholder='Enter list title...'
               className=' border-2 border-blue-700 rounded-md ps-2 text-black'
@@ -73,7 +71,7 @@ const AddListDrop = (props) => {
             onClick={() => {
               setIsDrop(!isDrop);
             }}
-            className='flex justify-center items-center text-sm font-medium cursor-pointer'
+            className='flex justify-center items-center text-sm font-medium cursor-pointer text-slate-800'
           >
             <div className=' text-xl'>+</div>
             <div className='mx-3'>Add another list</div>
