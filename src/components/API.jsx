@@ -69,13 +69,21 @@ export function creatingList(boardId, listName, handleData, setHandleError) {
 
 /*Archiving the Lists*/
 
-export function archivingListsOfABoard(listId, setHandleError) {
+export function archivingListsOfABoard(
+  listId,
+  listActionDrop,
+  setListActionDrop,
+  handleChange,
+  setHandleChange,
+  setHandleError
+) {
   axios
     .put(
       `https://api.trello.com/1/lists/${listId}/closed?key=${apiKey}&token=${apiToken}&value=true`
     )
-    .then((res) => {
-      return res;
+    .then(() => {
+      setListActionDrop(!listActionDrop);
+      setHandleChange(!handleChange);
     })
     .catch((err) => {
       console.log(err);

@@ -17,6 +17,8 @@ const List = (props) => {
     setCardNameInCardDetail,
     isCardDetailVisible,
     setIsCardDetailVisible,
+    handleChange,
+    setHandleChange,
   } = props;
 
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
@@ -62,6 +64,8 @@ const List = (props) => {
                 listId={listId}
                 listActionDrop={listActionDrop}
                 setListActionDrop={setListActionDrop}
+                handleChange={handleChange}
+                setHandleChange={setHandleChange}
               />
             ) : (
               <></>

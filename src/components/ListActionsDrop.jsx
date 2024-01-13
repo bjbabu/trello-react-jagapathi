@@ -1,9 +1,16 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { archivingListsOfABoard } from "./API";
 
 const ListActionsDrop = (props) => {
-  const { listId, listActionDrop, setListActionDrop } = props;
+  const {
+    listId,
+    listActionDrop,
+    setListActionDrop,
+    handleChange,
+    setHandleChange,
+  } = props;
   const [handleError, setHandleError] = useState("");
 
   if (handleError) {
@@ -26,7 +33,14 @@ const ListActionsDrop = (props) => {
       <div
         className=' hover:bg-slate-200 hover:rounded-md'
         onClick={() => {
-          archivingListsOfABoard(listId, setHandleError);
+          archivingListsOfABoard(
+            listId,
+            listActionDrop,
+            setListActionDrop,
+            handleChange,
+            setHandleChange,
+            setHandleError
+          );
         }}
       >
         Archive this list

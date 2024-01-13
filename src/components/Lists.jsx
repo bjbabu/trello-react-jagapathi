@@ -20,6 +20,7 @@ const Lists = () => {
   const [cardNameInCardDetail, setCardNameInCardDetail] = useState("");
   const [listNameInCardDetail, setListNameInCardDetail] = useState("");
   const [isCardDetailVisible, setIsCardDetailVisible] = useState(false);
+  const [handleChange, setHandleChange] = useState(false);
 
   const board = listOfBoards.filter((board) => {
     return board.id === id;
@@ -27,7 +28,7 @@ const Lists = () => {
 
   useEffect(() => {
     getListsOfABoard(id, handleData, setHandleError);
-  }, [id]);
+  }, [id, handleChange]);
 
   function handleData(data) {
     setListsInBoard(data);
@@ -153,6 +154,8 @@ const Lists = () => {
                 setCardNameInCardDetail={setCardNameInCardDetail}
                 isCardDetailVisible={isCardDetailVisible}
                 setIsCardDetailVisible={setIsCardDetailVisible}
+                handleChange={handleChange}
+                setHandleChange={setHandleChange}
               />
             ))}
             <AddListDrop
