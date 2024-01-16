@@ -5,11 +5,6 @@ const baseUrl = import.meta.env.VITE_BASE_URL;
 const apiKey = import.meta.env.VITE_API_KEY;
 const apiToken = import.meta.env.VITE_API_TOKEN;
 
-// const id = "6597aa01d67bfb4269b27c04";
-// const apiKey = "b23160e2a444b73f7e80a11836f7d23a";
-// const apiToken =
-//   "ATTAb0ba4d05544f9a6fd6851bf310b28b00f9d2cda8b3fb859e2e20b46e3644361bCB58EAF7";
-
 /*Getting Boards*/
 
 export function getBoards(id, handleData, setHandleError) {
