@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { useContext } from "react";
 import { Context } from "../App";
 import { deletingCheckItem, updatingCheckItem } from "./API";
+import { deleteCheckItem, updateCheckItem } from "../redux/checkitemsSlice";
+import { useDispatch } from "react-redux";
 
 const Task = (props) => {
   const {
@@ -14,17 +16,23 @@ const Task = (props) => {
     taskName,
     taskState,
     setTotalCheckedItems,
-    handleDeleteCheckItem,
-    handleUpdateCheckItem,
+    // handleUpdateCheckItem,
   } = props;
 
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
-  // const [taskStatus, setTaskStatus] = useState(taskState);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     updatingCheckItem(cardIdForCardDetail, itemId, taskState, setHandleError);
   }, [taskState]);
+
+  function handleDeleteCheckItem(data) {
+    dispatch(
+      deleteCheckItem({ checkListId: checkListId, checkItemId: itemId })
+    );
+  }
 
   if (handleError) {
     return <div>{handleError}</div>;
@@ -39,7 +47,10 @@ const Task = (props) => {
         id=''
         className=' w-4 h-4 flex-grow-0 cursor-pointer'
         onClick={() => {
-          handleUpdateCheckItem(itemId);
+          // handleUpdateCheckItem(itemId);
+          dispatch(
+            updateCheckItem({ checkListId: checkListId, checkItemId: itemId })
+          );
           if (taskState === "complete") {
             setTotalCheckedItems((val) => val - 1);
           } else {
@@ -67,8 +78,6 @@ const Task = (props) => {
             deletingCheckItem(
               checkListId,
               itemId,
-              // handleChange,
-              // setHandleChange,
               handleDeleteCheckItem,
               setHandleError
             );

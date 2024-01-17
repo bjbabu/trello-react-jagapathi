@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useReducer, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useContext } from "react";
 import { Context } from "../App";
 import Task from "./Task";
@@ -12,6 +12,7 @@ import {
   creatingCheckItems,
 } from "./API";
 import { archiveCheckList } from "../redux/checkListsSlice";
+import { addCheckitem } from "../redux/checkitemsSlice";
 
 const reducer = (checkItemsList, action) => {
   switch (action.type) {
@@ -58,23 +59,29 @@ const CheckListBody = (props) => {
   const [checkItemName, setCheckItemName] = useState("");
   const [totalCheckedItems, setTotalCheckedItems] = useState(0);
 
+  const checkitemsData = useSelector((state) => state.checkitems.data);
+
   useEffect(() => {
-    gettingCheckItems(checkListId, handleGetData, setHandleError);
-  }, [checkListId]);
+    // gettingCheckItems(checkListId, handleGetData, setHandleError);
+    dispatch(gettingCheckItems(checkListId));
+  }, []);
 
-  function handleGetData(data) {
-    setTotalCheckedItems(0);
-    data.map((checkItem) => {
-      if (checkItem.state === "complete") {
-        setTotalCheckedItems((val) => val + 1);
-      }
-    });
+  // if (checkitemsData[checkListId]) {
+  //   setTotalCheckedItems(0);
+  //   checkitemsData[checkListId].map((checkItem) => {
+  //     if (checkItem.state === "complete") {
+  //       setTotalCheckedItems((val) => val + 1);
+  //     }
+  //   });
+  // }
 
-    dispatchCheckItems({
-      type: "GET",
-      payload: { checkItemsData: data },
-    });
-  }
+  // function handleGetData(data) {
+
+  //   dispatchCheckItems({
+  //     type: "GET",
+  //     payload: { checkItemsData: data },
+  //   });
+  // }
 
   function handleCheckListArchive(data) {
     dispatch(
@@ -87,19 +94,20 @@ const CheckListBody = (props) => {
 
   function handleCreatingCheckItem(data) {
     setCheckItemName("");
-    dispatchCheckItems({ type: "POST", payload: { createdCheckItem: data } });
+    dispatch(addCheckitem({ id: checkListId, data: data }));
+    // dispatchCheckItems({ type: "POST", payload: { createdCheckItem: data } });
   }
 
-  function handleDeleteCheckItem(data) {
-    dispatchCheckItems({ type: "DELETE", payload: { dleteCheckItemId: data } });
-  }
+  // function handleDeleteCheckItem(data) {
+  //   dispatchCheckItems({ type: "DELETE", payload: { dleteCheckItemId: data } });
+  // }
 
-  function handleUpdateCheckItem(data) {
-    dispatchCheckItems({
-      type: "UPDATE",
-      payload: { checkItemId: data },
-    });
-  }
+  // function handleUpdateCheckItem(data) {
+  //   dispatchCheckItems({
+  //     type: "UPDATE",
+  //     payload: { checkItemId: data },
+  //   });
+  // }
 
   let width;
   if (checkItemsList.length !== 0) {
@@ -169,19 +177,19 @@ const CheckListBody = (props) => {
       </div>
 
       <div id='tasks'>
-        {checkItemsList.map((checkItem) => (
-          <Task
-            key={checkItem.id}
-            cardIdForCardDetail={cardIdForCardDetail}
-            checkListId={checkListId}
-            itemId={checkItem.id}
-            taskName={checkItem.name}
-            taskState={checkItem.state}
-            setTotalCheckedItems={setTotalCheckedItems}
-            handleDeleteCheckItem={handleDeleteCheckItem}
-            handleUpdateCheckItem={handleUpdateCheckItem}
-          />
-        ))}
+        {checkitemsData[checkListId] &&
+          checkitemsData[checkListId].map((checkItem) => (
+            <Task
+              key={checkItem.id}
+              cardIdForCardDetail={cardIdForCardDetail}
+              checkListId={checkListId}
+              itemId={checkItem.id}
+              taskName={checkItem.name}
+              taskState={checkItem.state}
+              setTotalCheckedItems={setTotalCheckedItems}
+              // handleUpdateCheckItem={handleUpdateCheckItem}
+            />
+          ))}
       </div>
 
       {isTaskAddVisible ? (

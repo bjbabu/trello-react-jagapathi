@@ -25,6 +25,12 @@ import {
   fetchCheckListsFailure,
 } from "../redux/checkListsSlice";
 
+import {
+  fetchCheckitemsRequest,
+  fetchCheckitemsSuccess,
+  fetchCheckitemsFailure,
+} from "../redux/checkitemsSlice";
+
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const apiKey = import.meta.env.VITE_API_KEY;
 const apiToken = import.meta.env.VITE_API_TOKEN;
@@ -182,18 +188,6 @@ export function deletingACardInAList(
 
 /* Getting Check Lists in a card */
 
-// export function gettingChecklistsInACard(cardId, handleData, setHandleError) {
-//   axios
-//     .get(
-//       `https://api.trello.com/1/cards/${cardId}/checklists?key=${apiKey}&token=${apiToken}`
-//     )
-//     .then((res) => handleData(res.data))
-//     .catch((err) => {
-//       console.log(err);
-//       setHandleError("Error while fetching check lists in the card");
-//     });
-// }
-
 export function gettingChecklistsInACard(cardId) {
   return (dispatch) => {
     dispatch(fetchCheckListsRequest());
@@ -258,18 +252,21 @@ export function deletingCheckListInACard(
 
 /* Getting check items in a check list */
 
-export function gettingCheckItems(checkListId, handleData, setHandleError) {
-  axios
-    .get(
-      `https://api.trello.com/1/checklists/${checkListId}/checkItems?key=${apiKey}&token=${apiToken}`
-    )
-    .then((res) => {
-      handleData(res.data);
-    })
-    .catch((err) => {
-      console.log(err);
-      setHandleError("Error while fetching check items");
-    });
+export function gettingCheckItems(checkListId) {
+  return (dispatch) => {
+    dispatch(fetchCheckitemsRequest());
+    axios
+      .get(
+        `https://api.trello.com/1/checklists/${checkListId}/checkItems?key=${apiKey}&token=${apiToken}`
+      )
+      .then((res) => {
+        dispatch(fetchCheckitemsSuccess({ id: checkListId, data: res.data }));
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(fetchCheckitemsFailure(err.message));
+      });
+  };
 }
 
 /* Creating check items in a check list */
@@ -307,8 +304,8 @@ export function deletingCheckItem(
     .delete(
       `https://api.trello.com/1/checklists/${checkListId}/checkItems/${itemId}?key=${apiKey}&token=${apiToken}`
     )
-    .then(() => {
-      handleDeleteCheckItem(itemId);
+    .then((res) => {
+      handleDeleteCheckItem(res.data);
       // setHandleChange(!handleChange);
     })
     .catch((err) => {
