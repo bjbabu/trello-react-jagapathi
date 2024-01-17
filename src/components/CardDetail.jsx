@@ -28,6 +28,7 @@ const CardDetail = (props) => {
   const [checkListName, setCheckListName] = useState("Checklist");
 
   const checkListsData = useSelector((state) => state.checkLists.data);
+  console.log(checkListsData);
 
   function handleArchiveCard(data) {
     dispatch(

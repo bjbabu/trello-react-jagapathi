@@ -12,6 +12,7 @@ const checkListsSlice = createSlice({
     fetchCheckListsSuccess: (state, action) => {
       state.loading = false;
       state.data = { ...state.data, [action.payload.id]: action.payload.data };
+      console.log(action.payload.data);
       state.error = "";
     },
     fetchCheckListsFailure: (state, action) => {
@@ -36,6 +37,7 @@ const checkListsSlice = createSlice({
 
       state.data[action.payload.cardId] = temp;
     },
+    updateCheckItems: (state, action) => {},
   },
 });
 

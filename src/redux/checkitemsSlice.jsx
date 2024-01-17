@@ -17,10 +17,6 @@ const checkitemsSlice = createSlice({
     fetchCheckitemsSuccess: (state, action) => {
       state.loading = false;
       state.data = { ...state.data, [action.payload.id]: action.payload.data };
-      state.completedItems = {
-        ...state.completedItems,
-        [action.payload.id]: action.payload.data.map(),
-      };
     },
     fetchCheckitemsFailure: (state, action) => {
       state.loading = false;

@@ -14,43 +14,12 @@ import {
 import { archiveCheckList } from "../redux/checkListsSlice";
 import { addCheckitem } from "../redux/checkitemsSlice";
 
-const reducer = (checkItemsList, action) => {
-  switch (action.type) {
-    case "GET": {
-      return [...action.payload.checkItemsData];
-    }
-    case "POST":
-      return [...checkItemsList, action.payload.createdCheckItem];
-    case "UPDATE": {
-      const data = checkItemsList.map((checkItem) => {
-        if (checkItem.id === action.payload.checkItemId) {
-          if (checkItem.state === "complete") {
-            return { ...checkItem, state: "incomplete" };
-          } else {
-            return { ...checkItem, state: "complete" };
-          }
-        } else {
-          return checkItem;
-        }
-      });
-      return data;
-    }
-    case "DELETE": {
-      const data = checkItemsList.filter((checkItem) => {
-        return checkItem.id !== action.payload.dleteCheckItemId;
-      });
-
-      return data;
-    }
-  }
-};
-
 const CheckListBody = (props) => {
   const { cardIdForCardDetail, checkListId, checkListName } = props;
 
   const dispatch = useDispatch();
 
-  const [checkItemsList, dispatchCheckItems] = useReducer(reducer, []);
+  // const [checkItemsList, dispatchCheckItems] = useReducer(reducer, []);
 
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
@@ -59,12 +28,11 @@ const CheckListBody = (props) => {
   const [checkItemName, setCheckItemName] = useState("");
   const [totalCheckedItems, setTotalCheckedItems] = useState(0);
 
-  const checkitemsData = useSelector((state) => state.checkitems.data);
-
   useEffect(() => {
-    // gettingCheckItems(checkListId, handleGetData, setHandleError);
     dispatch(gettingCheckItems(checkListId));
   }, []);
+
+  const checkitemsData = useSelector((state) => state.checkitems.data);
 
   // if (checkitemsData[checkListId]) {
   //   setTotalCheckedItems(0);
@@ -72,14 +40,6 @@ const CheckListBody = (props) => {
   //     if (checkItem.state === "complete") {
   //       setTotalCheckedItems((val) => val + 1);
   //     }
-  //   });
-  // }
-
-  // function handleGetData(data) {
-
-  //   dispatchCheckItems({
-  //     type: "GET",
-  //     payload: { checkItemsData: data },
   //   });
   // }
 
@@ -95,26 +55,14 @@ const CheckListBody = (props) => {
   function handleCreatingCheckItem(data) {
     setCheckItemName("");
     dispatch(addCheckitem({ id: checkListId, data: data }));
-    // dispatchCheckItems({ type: "POST", payload: { createdCheckItem: data } });
   }
-
-  // function handleDeleteCheckItem(data) {
-  //   dispatchCheckItems({ type: "DELETE", payload: { dleteCheckItemId: data } });
-  // }
-
-  // function handleUpdateCheckItem(data) {
-  //   dispatchCheckItems({
-  //     type: "UPDATE",
-  //     payload: { checkItemId: data },
-  //   });
-  // }
 
   let width;
-  if (checkItemsList.length !== 0) {
-    width = (totalCheckedItems / checkItemsList.length) * 100;
-    width = Math.floor(width);
-    width = width + "%";
-  }
+  // if (checkItemsList.length !== 0) {
+  //   width = (totalCheckedItems / checkItemsList.length) * 100;
+  //   width = Math.floor(width);
+  //   width = width + "%";
+  // }
 
   if (handleError) {
     return <div>{handleError}</div>;
@@ -155,13 +103,15 @@ const CheckListBody = (props) => {
         </button>
       </header>
       <div id='bar' className='flex my-2 items-center pe-0'>
-        {checkItemsList.length !== 0 ? (
+        {checkitemsData[checkListId] &&
+        checkitemsData[checkListId].length !== 0 ? (
           <div className='flex-grow-0 text-xs px-2'>{width}</div>
         ) : (
           <div className='flex-grow-0 text-xs px-2'>0%</div>
         )}
         <div className='w-full mx-2 h-2 bg-slate-200 rounded-md'>
-          {checkItemsList.length !== 0 ? (
+          {checkitemsData[checkListId] &&
+          checkitemsData[checkListId].length !== 0 ? (
             <div
               className='w-full bg-slate-200 h-2 rounded-md'
               style={
