@@ -8,31 +8,32 @@ import AddListDrop from "./AddListDrop";
 import CardDetail from "./CardDetail";
 import YourBoards from "./YourBoards";
 import { getListsOfABoard } from "./API";
+import { useDispatch, useSelector } from "react-redux";
 
 const Lists = () => {
   const { id } = useParams();
 
+  const dispatch = useDispatch();
+
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
 
-  const [listsInBoard, setListsInBoard] = useState([]);
+  const boardsData = useSelector((state) => state.boards.data);
+  const listsData = useSelector((state) => state.lists.data);
+
   const [cardIdForCardDetail, setCardIdForCardDetail] = useState("");
   const [cardNameInCardDetail, setCardNameInCardDetail] = useState("");
   const [listNameInCardDetail, setListNameInCardDetail] = useState("");
+  const [listIdInCardDetail, setListIdInCardDetail] = useState("");
   const [isCardDetailVisible, setIsCardDetailVisible] = useState(false);
-  const [handleChange, setHandleChange] = useState(false);
 
-  const board = listOfBoards.filter((board) => {
+  const board = boardsData.filter((board) => {
     return board.id === id;
   });
 
   useEffect(() => {
-    getListsOfABoard(id, handleData, setHandleError);
-  }, [id, handleChange]);
-
-  function handleData(data) {
-    setListsInBoard(data);
-  }
+    dispatch(getListsOfABoard(id));
+  }, [id]);
 
   if (handleError) {
     return <div>{handleError}</div>;
@@ -103,7 +104,7 @@ const Lists = () => {
               <h3 className='text-sm font-semibold'>Your boards</h3>{" "}
               <span className=' text-2xl font-normal self-center'>+</span>
             </header>
-            {listOfBoards.map((board) => (
+            {boardsData.map((board) => (
               <YourBoards
                 key={board.id}
                 urlId={id}
@@ -139,34 +140,32 @@ const Lists = () => {
               board.length !== 0
                 ? {
                     ...board[0].prefs,
-                    // backgroundImage: `url(${board[0].prefs.backgroundImage})`,
                   }
                 : {}
             }
           >
-            {listsInBoard.map((list) => (
-              <List
-                key={list.id}
-                listId={list.id}
-                listName={list.name}
-                setCardIdForCardDetail={setCardIdForCardDetail}
-                setListNameInCardDetail={setListNameInCardDetail}
-                setCardNameInCardDetail={setCardNameInCardDetail}
-                isCardDetailVisible={isCardDetailVisible}
-                setIsCardDetailVisible={setIsCardDetailVisible}
-                handleChange={handleChange}
-                setHandleChange={setHandleChange}
-              />
-            ))}
-            <AddListDrop
-              boardId={id}
-              listsInBoard={listsInBoard}
-              setListsInBoard={setListsInBoard}
-            />
+            {listsData ? (
+              listsData.map((list) => (
+                <List
+                  key={list.id}
+                  listId={list.id}
+                  setListIdInCardDetail={setListIdInCardDetail}
+                  listName={list.name}
+                  setCardIdForCardDetail={setCardIdForCardDetail}
+                  setListNameInCardDetail={setListNameInCardDetail}
+                  setCardNameInCardDetail={setCardNameInCardDetail}
+                  setIsCardDetailVisible={setIsCardDetailVisible}
+                />
+              ))
+            ) : (
+              <></>
+            )}
+            <AddListDrop boardId={id} />
           </div>
         </div>
         {isCardDetailVisible ? (
           <CardDetail
+            listIdInCardDetail={listIdInCardDetail}
             cardIdForCardDetail={cardIdForCardDetail}
             listNameInCardDetail={listNameInCardDetail}
             cardNameInCardDetail={cardNameInCardDetail}

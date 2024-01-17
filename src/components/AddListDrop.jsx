@@ -1,15 +1,19 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useContext } from "react";
 import { Context } from "../App";
 import { creatingList } from "./API";
+import { addList } from "../redux/listsSlice";
+import { useDispatch } from "react-redux";
 
 const AddListDrop = (props) => {
-  const { boardId, listsInBoard, setListsInBoard } = props;
+  const { boardId } = props;
 
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
+
+  const dispatch = useDispatch();
 
   const [isDrop, setIsDrop] = useState(false);
   const [listName, setListName] = useState("");
@@ -17,7 +21,7 @@ const AddListDrop = (props) => {
   function handleData(data) {
     setIsDrop(!isDrop);
     setListName("");
-    setListsInBoard([...listsInBoard, data]);
+    dispatch(addList(data));
   }
 
   if (handleError) {

@@ -2,16 +2,18 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { archivingListsOfABoard } from "./API";
+import { archiveList } from "../redux/listsSlice";
+import { useDispatch } from "react-redux";
 
 const ListActionsDrop = (props) => {
-  const {
-    listId,
-    listActionDrop,
-    setListActionDrop,
-    handleChange,
-    setHandleChange,
-  } = props;
+  const { listId, listActionDrop, setListActionDrop } = props;
   const [handleError, setHandleError] = useState("");
+
+  const dispatch = useDispatch();
+
+  function handleData(data) {
+    dispatch(archiveList(data.id));
+  }
 
   if (handleError) {
     return <div>Error while archiving the list!!!</div>;
@@ -37,8 +39,7 @@ const ListActionsDrop = (props) => {
             listId,
             listActionDrop,
             setListActionDrop,
-            handleChange,
-            setHandleChange,
+            handleData,
             setHandleError
           );
         }}

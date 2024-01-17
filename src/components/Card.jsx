@@ -6,7 +6,6 @@ const Card = (props) => {
     cardName,
     setCardIdForCardDetail,
     setCardNameInCardDetail,
-    isCardDetailVisible,
     setIsCardDetailVisible,
   } = props;
 
@@ -17,7 +16,7 @@ const Card = (props) => {
         onClick={() => {
           setCardIdForCardDetail(cardId);
           setCardNameInCardDetail(cardName);
-          setIsCardDetailVisible(!isCardDetailVisible);
+          setIsCardDetailVisible(true);
         }}
       >
         {cardName}

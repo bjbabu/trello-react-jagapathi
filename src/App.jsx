@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-undef */
 import "./App.css";
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import Navbar from "./components/Navbar";
 import BoardsBody from "./components/BoardsBody";
 import Lists from "./components/Lists";
@@ -16,13 +16,18 @@ function App() {
   const [listOfBoards, setListOfBoards] = useState([]);
   const [handleError, setHandleError] = useState("");
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    getBoards(id, handleData, setHandleError);
+    dispatch(getBoards(id));
   }, []);
 
-  function handleData(data) {
-    setListOfBoards(data);
-  }
+  // const boardsData = useSelector((state) => state.boards);
+  // console.log(boardsData);
+
+  // function handleData(data) {
+  //   setListOfBoards(data);
+  // }
 
   return (
     <>

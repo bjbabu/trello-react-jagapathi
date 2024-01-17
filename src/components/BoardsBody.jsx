@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Board from "./Board";
 import BoardShimmer from "./BoardShimmer";
 import CreateBoard from "./CreateBoard";
@@ -11,6 +12,8 @@ import { Link } from "react-router-dom";
 const BoardsBody = () => {
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
+
+  const boardsData = useSelector((state) => state.boards.data);
 
   const [isCreateBoardVisible, setIsCreateBoardVisible] = useState(false);
 
@@ -47,9 +50,9 @@ const BoardsBody = () => {
                 <h3 className='font-semibold'>Trello Workspace</h3>
               </div>
               <div className=''>
-                {listOfBoards.length !== 0 ? (
+                {boardsData.length !== 0 ? (
                   <ul className=' flex flex-wrap'>
-                    {listOfBoards.map((board) => (
+                    {boardsData.map((board) => (
                       <Link key={board.id} to={`/boards/${board.id}`}>
                         <Board
                           key={board.id}
@@ -71,7 +74,7 @@ const BoardsBody = () => {
                           Create new board
                         </div>
                         <div className='text-sm text-slate-600 '>
-                          {10 - listOfBoards.length} remaining
+                          {10 - boardsData.length} remaining
                         </div>
                       </div>
 

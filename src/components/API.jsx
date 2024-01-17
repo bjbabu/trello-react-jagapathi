@@ -1,22 +1,42 @@
 /* eslint-disable no-undef */
 import axios from "axios";
 
+import {
+  fetchBoardsRequest,
+  fetchBoardsSuccess,
+  fetchBoardsFailure,
+} from "../redux/boardsSlice";
+
+import {
+  fetchListsRequest,
+  fetchListsSuccess,
+  fetchListsFailure,
+} from "../redux/listsSlice";
+
+import {
+  fetchCardsRequest,
+  fetchCardsSuccess,
+  fetchCardsFailure,
+} from "../redux/cardsSlice";
+
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const apiKey = import.meta.env.VITE_API_KEY;
 const apiToken = import.meta.env.VITE_API_TOKEN;
 
 /*Getting Boards*/
 
-export function getBoards(id, handleData, setHandleError) {
-  axios
-    .get(`${baseUrl}/members/${id}/boards?key=${apiKey}&token=${apiToken}`)
-    .then((res) => {
-      handleData(res.data);
-    })
-    .catch((err) => {
-      console.log(err);
-      setHandleError("Error while fetching boards");
-    });
+export function getBoards(id) {
+  return (dispatch) => {
+    dispatch(fetchBoardsRequest());
+    axios
+      .get(`${baseUrl}/members/${id}/boards?key=${apiKey}&token=${apiToken}`)
+      .then((res) => {
+        dispatch(fetchBoardsSuccess(res.data));
+      })
+      .catch((err) => {
+        dispatch(fetchBoardsFailure(err.message));
+      });
+  };
 }
 
 /*Creating Board*/
@@ -37,14 +57,28 @@ export function createBoard(boardName, setHandleError) {
 
 /*Getting Lists of a board*/
 
-export function getListsOfABoard(boardId, handleData, setHandleError) {
-  axios
-    .get(`${baseUrl}/boards/${boardId}/lists?key=${apiKey}&token=${apiToken}`)
-    .then((res) => handleData(res.data))
-    .catch((err) => {
-      console.log(err);
-      setHandleError("Error while getting lists");
-    });
+// export function getListsOfABoard(boardId, handleData, setHandleError) {
+//   axios
+//     .get(`${baseUrl}/boards/${boardId}/lists?key=${apiKey}&token=${apiToken}`)
+//     .then((res) => handleData(res.data))
+//     .catch((err) => {
+//       console.log(err);
+//       setHandleError("Error while getting lists");
+//     });
+// }
+
+export function getListsOfABoard(boardId) {
+  return (dispatch) => {
+    dispatch(fetchListsRequest());
+    axios
+      .get(`${baseUrl}/boards/${boardId}/lists?key=${apiKey}&token=${apiToken}`)
+      .then((res) => {
+        dispatch(fetchListsSuccess(res.data));
+      })
+      .catch((err) => {
+        dispatch(fetchListsFailure(err.message));
+      });
+  };
 }
 
 /* Creating a new list */
@@ -68,17 +102,16 @@ export function archivingListsOfABoard(
   listId,
   listActionDrop,
   setListActionDrop,
-  handleChange,
-  setHandleChange,
+  handleData,
   setHandleError
 ) {
   axios
     .put(
       `https://api.trello.com/1/lists/${listId}/closed?key=${apiKey}&token=${apiToken}&value=true`
     )
-    .then(() => {
+    .then((res) => {
       setListActionDrop(!listActionDrop);
-      setHandleChange(!handleChange);
+      handleData(res.data);
     })
     .catch((err) => {
       console.log(err);
@@ -88,14 +121,21 @@ export function archivingListsOfABoard(
 
 /* Getting Cards in a list*/
 
-export function getCardsOfAList(listId, handleData, setHandleError) {
-  axios
-    .get(`${baseUrl}/lists/${listId}/cards?key=${apiKey}&token=${apiToken}`)
-    .then((res) => handleData(res.data))
-    .catch((err) => {
-      console.log(err);
-      setHandleError("Error while getting cards of a list");
-    });
+export function getCardsOfAList(listId) {
+  return (dispatch) => {
+    dispatch(fetchCardsRequest());
+    axios
+      .get(`${baseUrl}/lists/${listId}/cards?key=${apiKey}&token=${apiToken}`)
+      .then((res) => {
+        dispatch(fetchCardsSuccess({ id: listId, data: res.data }));
+        // handleData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        // setHandleError("Error while getting cards of a list");
+        dispatch(fetchCardsFailure(err.message));
+      });
+  };
 }
 
 /* Creating Cards in a list */
@@ -104,6 +144,7 @@ export function creatingCardsInAList(
   listId,
   cardName,
   setCardName,
+  handleData,
   setHandleError
 ) {
   const data = {
@@ -115,7 +156,8 @@ export function creatingCardsInAList(
 
   axios
     .post(`${baseUrl}/cards`, data)
-    .then(() => {
+    .then((res) => {
+      handleData(res.data);
       setCardName("");
     })
     .catch((err) => {
@@ -128,15 +170,15 @@ export function creatingCardsInAList(
 
 export function deletingACardInAList(
   cardId,
-  setIsCardDetailVisible,
+  handleArchiveData,
   setHandleError
 ) {
   axios
     .delete(
       `https://api.trello.com/1/cards/${cardId}?key=${apiKey}&token=${apiToken}`
     )
-    .then(() => {
-      setIsCardDetailVisible(false);
+    .then((res) => {
+      handleArchiveData(res.data);
     })
     .catch((err) => {
       console.log(err);

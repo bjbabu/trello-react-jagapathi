@@ -2,39 +2,41 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useContext } from "react";
 import { Context } from "../App";
 import ListActionsDrop from "./ListActionsDrop";
 import Card from "./Card";
 import { getCardsOfAList, creatingCardsInAList } from "./API";
+import { addCard } from "../redux/cardsSlice";
 
 const List = (props) => {
   const {
     listId,
+    setListIdInCardDetail,
     listName,
     setCardIdForCardDetail,
     setListNameInCardDetail,
     setCardNameInCardDetail,
-    isCardDetailVisible,
     setIsCardDetailVisible,
-    handleChange,
-    setHandleChange,
   } = props;
+
+  const dispatch = useDispatch();
+  const cardsData = useSelector((state) => state.cards.data);
 
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
 
-  const [cardsInList, setCardsInList] = useState([]);
   const [cardName, setCardName] = useState("");
   const [listActionDrop, setListActionDrop] = useState(false);
   const [isAddCardDrop, setIsAddCardDrop] = useState(false);
 
   useEffect(() => {
-    getCardsOfAList(listId, handleData, setHandleError);
-  }, [listId, cardName, isCardDetailVisible]);
+    dispatch(getCardsOfAList(listId));
+  }, [listId, cardName]);
 
-  function handleData(data) {
-    setCardsInList(data);
+  function handleAddCard(data) {
+    dispatch(addCard({ id: listId, data: data }));
   }
 
   if (handleError) {
@@ -47,6 +49,7 @@ const List = (props) => {
         className='w-72 bg-slate-100 p-2 rounded-md shadow-lg flex flex-col justify-center self-start flex-shrink-0'
         onClick={() => {
           setListNameInCardDetail(listName);
+          setListIdInCardDetail(listId);
         }}
       >
         <header className='flex items-center justify-between ps-3 pe-2 desktop: h-5'>
@@ -64,8 +67,6 @@ const List = (props) => {
                 listId={listId}
                 listActionDrop={listActionDrop}
                 setListActionDrop={setListActionDrop}
-                handleChange={handleChange}
-                setHandleChange={setHandleChange}
               />
             ) : (
               <></>
@@ -74,17 +75,17 @@ const List = (props) => {
         </header>
 
         <div id='cards' className='mt-3'>
-          {cardsInList.map((card) => (
-            <Card
-              key={card.id}
-              cardId={card.id}
-              cardName={card.name}
-              setCardIdForCardDetail={setCardIdForCardDetail}
-              setCardNameInCardDetail={setCardNameInCardDetail}
-              isCardDetailVisible={isCardDetailVisible}
-              setIsCardDetailVisible={setIsCardDetailVisible}
-            />
-          ))}
+          {cardsData[listId] &&
+            cardsData[listId].map((card) => (
+              <Card
+                key={card.id}
+                cardId={card.id}
+                cardName={card.name}
+                setCardIdForCardDetail={setCardIdForCardDetail}
+                setCardNameInCardDetail={setCardNameInCardDetail}
+                setIsCardDetailVisible={setIsCardDetailVisible}
+              />
+            ))}
         </div>
 
         <footer className='flex text-black mt-4 '>
@@ -111,6 +112,7 @@ const List = (props) => {
                       listId,
                       cardName,
                       setCardName,
+                      handleAddCard,
                       setHandleError
                     );
                   }}

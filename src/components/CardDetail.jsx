@@ -6,6 +6,8 @@ import { Context } from "../App";
 import CheckListPop from "./CheckListPop";
 import CheckListBody from "./CheckListBody";
 import { deletingACardInAList, gettingChecklistsInACard } from "./API";
+import { archiveCard } from "../redux/cardsSlice";
+import { useDispatch } from "react-redux";
 
 const reducer = (listOfCheckLists, action) => {
   switch (action.type) {
@@ -24,12 +26,15 @@ const reducer = (listOfCheckLists, action) => {
 
 const CardDetail = (props) => {
   const {
+    listIdInCardDetail,
     cardIdForCardDetail,
     listNameInCardDetail,
     cardNameInCardDetail,
     isCardDetailVisible,
     setIsCardDetailVisible,
   } = props;
+
+  const dispatch = useDispatch();
 
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
@@ -44,7 +49,14 @@ const CardDetail = (props) => {
     gettingChecklistsInACard(cardIdForCardDetail, handleData, setHandleError);
   }, []);
 
+  function handleArchiveCard(data) {
+    dispatch(
+      archiveCard({ listId: listIdInCardDetail, cardId: cardIdForCardDetail })
+    );
+  }
+
   function handleData(data) {
+    console.log(data);
     checkListsDispatch({ type: "GET", payload: { checkListsData: data } });
   }
 
@@ -160,9 +172,10 @@ const CardDetail = (props) => {
                   onClick={() => {
                     deletingACardInAList(
                       cardIdForCardDetail,
-                      setIsCardDetailVisible,
+                      handleArchiveCard,
                       setHandleError
                     );
+                    setIsCardDetailVisible(false);
                   }}
                 >
                   <svg
