@@ -1,4 +1,6 @@
 /* eslint-disable react/prop-types */
+import { useDispatch } from "react-redux";
+import { gettingChecklistsInACard } from "./API";
 
 const Card = (props) => {
   const {
@@ -9,6 +11,8 @@ const Card = (props) => {
     setIsCardDetailVisible,
   } = props;
 
+  const dispatch = useDispatch();
+
   return (
     <>
       <div
@@ -17,6 +21,7 @@ const Card = (props) => {
           setCardIdForCardDetail(cardId);
           setCardNameInCardDetail(cardName);
           setIsCardDetailVisible(true);
+          dispatch(gettingChecklistsInACard(cardId));
         }}
       >
         {cardName}

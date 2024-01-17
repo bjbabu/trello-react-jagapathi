@@ -19,6 +19,12 @@ import {
   fetchCardsFailure,
 } from "../redux/cardsSlice";
 
+import {
+  fetchCheckListsRequest,
+  fetchCheckListsSuccess,
+  fetchCheckListsFailure,
+} from "../redux/checkListsSlice";
+
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const apiKey = import.meta.env.VITE_API_KEY;
 const apiToken = import.meta.env.VITE_API_TOKEN;
@@ -56,16 +62,6 @@ export function createBoard(boardName, setHandleError) {
 }
 
 /*Getting Lists of a board*/
-
-// export function getListsOfABoard(boardId, handleData, setHandleError) {
-//   axios
-//     .get(`${baseUrl}/boards/${boardId}/lists?key=${apiKey}&token=${apiToken}`)
-//     .then((res) => handleData(res.data))
-//     .catch((err) => {
-//       console.log(err);
-//       setHandleError("Error while getting lists");
-//     });
-// }
 
 export function getListsOfABoard(boardId) {
   return (dispatch) => {
@@ -128,11 +124,9 @@ export function getCardsOfAList(listId) {
       .get(`${baseUrl}/lists/${listId}/cards?key=${apiKey}&token=${apiToken}`)
       .then((res) => {
         dispatch(fetchCardsSuccess({ id: listId, data: res.data }));
-        // handleData(res.data);
       })
       .catch((err) => {
         console.log(err);
-        // setHandleError("Error while getting cards of a list");
         dispatch(fetchCardsFailure(err.message));
       });
   };
@@ -188,16 +182,33 @@ export function deletingACardInAList(
 
 /* Getting Check Lists in a card */
 
-export function gettingChecklistsInACard(cardId, handleData, setHandleError) {
-  axios
-    .get(
-      `https://api.trello.com/1/cards/${cardId}/checklists?key=${apiKey}&token=${apiToken}`
-    )
-    .then((res) => handleData(res.data))
-    .catch((err) => {
-      console.log(err);
-      setHandleError("Error while fetching check lists in the card");
-    });
+// export function gettingChecklistsInACard(cardId, handleData, setHandleError) {
+//   axios
+//     .get(
+//       `https://api.trello.com/1/cards/${cardId}/checklists?key=${apiKey}&token=${apiToken}`
+//     )
+//     .then((res) => handleData(res.data))
+//     .catch((err) => {
+//       console.log(err);
+//       setHandleError("Error while fetching check lists in the card");
+//     });
+// }
+
+export function gettingChecklistsInACard(cardId) {
+  return (dispatch) => {
+    dispatch(fetchCheckListsRequest());
+    axios
+      .get(
+        `https://api.trello.com/1/cards/${cardId}/checklists?key=${apiKey}&token=${apiToken}`
+      )
+      .then((res) => {
+        dispatch(fetchCheckListsSuccess({ id: cardId, data: res.data }));
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(fetchCheckListsFailure(err.message));
+      });
+  };
 }
 
 /* Creatin checklists in a card */
@@ -205,9 +216,9 @@ export function gettingChecklistsInACard(cardId, handleData, setHandleError) {
 export function creatingCheckListsInACard(
   cardId,
   checkListName,
-  handleCheckListCreation,
   setIsCheckListPopVisible,
   setCheckListName,
+  handleAddCheckList,
   setHandleError
 ) {
   axios
@@ -215,7 +226,7 @@ export function creatingCheckListsInACard(
       `https://api.trello.com/1/cards/${cardId}/checklists?key=${apiKey}&token=${apiToken}&name=${checkListName}`
     )
     .then((res) => {
-      handleCheckListCreation(res.data);
+      handleAddCheckList(res.data);
       setCheckListName("Checklist");
       setIsCheckListPopVisible(false);
     })
@@ -229,15 +240,15 @@ export function creatingCheckListsInACard(
 
 export function deletingCheckListInACard(
   checkListId,
-  setHandleCheckListDelete,
+  handleCheckListArchive,
   setHandleError
 ) {
   axios
     .delete(
       `https://api.trello.com/1/checklists/${checkListId}?key=${apiKey}&token=${apiToken}`
     )
-    .then(() => {
-      setHandleCheckListDelete(checkListId);
+    .then((res) => {
+      handleCheckListArchive(res.data);
     })
     .catch((err) => {
       console.log(err);

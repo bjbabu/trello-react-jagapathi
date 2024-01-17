@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useReducer, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useContext } from "react";
 import { Context } from "../App";
 import Task from "./Task";
@@ -10,6 +11,7 @@ import {
   gettingCheckItems,
   creatingCheckItems,
 } from "./API";
+import { archiveCheckList } from "../redux/checkListsSlice";
 
 const reducer = (checkItemsList, action) => {
   switch (action.type) {
@@ -43,12 +45,9 @@ const reducer = (checkItemsList, action) => {
 };
 
 const CheckListBody = (props) => {
-  const {
-    cardIdForCardDetail,
-    checkListId,
-    checkListName,
-    handleCheckListDelete,
-  } = props;
+  const { cardIdForCardDetail, checkListId, checkListName } = props;
+
+  const dispatch = useDispatch();
 
   const [checkItemsList, dispatchCheckItems] = useReducer(reducer, []);
 
@@ -75,6 +74,15 @@ const CheckListBody = (props) => {
       type: "GET",
       payload: { checkItemsData: data },
     });
+  }
+
+  function handleCheckListArchive(data) {
+    dispatch(
+      archiveCheckList({
+        cardId: cardIdForCardDetail,
+        checkListId: checkListId,
+      })
+    );
   }
 
   function handleCreatingCheckItem(data) {
@@ -130,7 +138,7 @@ const CheckListBody = (props) => {
           onClick={() => {
             deletingCheckListInACard(
               checkListId,
-              handleCheckListDelete,
+              handleCheckListArchive,
               setHandleError
             );
           }}

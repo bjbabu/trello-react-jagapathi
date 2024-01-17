@@ -7,22 +7,7 @@ import CheckListPop from "./CheckListPop";
 import CheckListBody from "./CheckListBody";
 import { deletingACardInAList, gettingChecklistsInACard } from "./API";
 import { archiveCard } from "../redux/cardsSlice";
-import { useDispatch } from "react-redux";
-
-const reducer = (listOfCheckLists, action) => {
-  switch (action.type) {
-    case "GET":
-      return [...action.payload.checkListsData];
-    case "POST":
-      return [...listOfCheckLists, action.payload.addedChecklist];
-    case "DELETE": {
-      const filteredData = listOfCheckLists.filter((checklist) => {
-        return checklist.id !== action.payload.checkListId;
-      });
-      return filteredData;
-    }
-  }
-};
+import { useDispatch, useSelector } from "react-redux";
 
 const CardDetail = (props) => {
   const {
@@ -39,36 +24,15 @@ const CardDetail = (props) => {
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
 
-  const [listOfCheckLists, checkListsDispatch] = useReducer(reducer, []);
-
   const [isCheckListPopVisible, setIsCheckListPopVisible] = useState(false);
   const [checkListName, setCheckListName] = useState("Checklist");
-  // const [handleCheckListDelete, setHandleCheckListDelete] = useState("");
 
-  useEffect(() => {
-    gettingChecklistsInACard(cardIdForCardDetail, handleData, setHandleError);
-  }, []);
+  const checkListsData = useSelector((state) => state.checkLists.data);
 
   function handleArchiveCard(data) {
     dispatch(
       archiveCard({ listId: listIdInCardDetail, cardId: cardIdForCardDetail })
     );
-  }
-
-  function handleData(data) {
-    console.log(data);
-    checkListsDispatch({ type: "GET", payload: { checkListsData: data } });
-  }
-
-  function handleCheckListCreation(data) {
-    checkListsDispatch({ type: "POST", payload: { addedChecklist: data } });
-  }
-
-  function handleCheckListDelete(checkListId) {
-    checkListsDispatch({
-      type: "DELETE",
-      payload: { checkListId: checkListId },
-    });
   }
 
   if (handleError) {
@@ -115,15 +79,15 @@ const CardDetail = (props) => {
           </header>
           <div id='content' className='flex p-2'>
             <div className='w-9/12 pe-5 flex flex-col'>
-              {listOfCheckLists.map((checklist) => (
-                <CheckListBody
-                  key={checklist.id}
-                  cardIdForCardDetail={cardIdForCardDetail}
-                  checkListId={checklist.id}
-                  checkListName={checklist.name}
-                  handleCheckListDelete={handleCheckListDelete}
-                />
-              ))}
+              {checkListsData[cardIdForCardDetail] &&
+                checkListsData[cardIdForCardDetail].map((checklist) => (
+                  <CheckListBody
+                    key={checklist.id}
+                    cardIdForCardDetail={cardIdForCardDetail}
+                    checkListId={checklist.id}
+                    checkListName={checklist.name}
+                  />
+                ))}
             </div>
             <div className='w-3/12 h-12'>
               <h4 className='text-xs font-semibold'>Add to card</h4>
@@ -156,7 +120,6 @@ const CardDetail = (props) => {
 
                   {isCheckListPopVisible ? (
                     <CheckListPop
-                      handleCheckListCreation={handleCheckListCreation}
                       cardIdForCardDetail={cardIdForCardDetail}
                       checkListName={checkListName}
                       setCheckListName={setCheckListName}

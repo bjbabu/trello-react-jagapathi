@@ -5,10 +5,11 @@ import { useState } from "react";
 import { useContext } from "react";
 import { Context } from "../App";
 import { creatingCheckListsInACard } from "./API";
+import { addCheckList } from "../redux/checkListsSlice";
+import { useDispatch } from "react-redux";
 
 const CheckListPop = (props) => {
   const {
-    handleCheckListCreation,
     cardIdForCardDetail,
     checkListName,
     setCheckListName,
@@ -16,11 +17,17 @@ const CheckListPop = (props) => {
     setIsCheckListPopVisible,
   } = props;
 
+  const dispatch = useDispatch();
+
   const [listOfBoards, setListOfBoards, handleError, setHandleError] =
     useContext(Context);
 
   if (handleError) {
     return <div>{handleError}</div>;
+  }
+
+  function handleAddCheckList(data) {
+    dispatch(addCheckList({ id: cardIdForCardDetail, data: data }));
   }
 
   return (
@@ -60,9 +67,9 @@ const CheckListPop = (props) => {
             creatingCheckListsInACard(
               cardIdForCardDetail,
               checkListName,
-              handleCheckListCreation,
               setIsCheckListPopVisible,
               setCheckListName,
+              handleAddCheckList,
               setHandleError
             );
           }}
