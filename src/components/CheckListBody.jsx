@@ -19,29 +19,17 @@ const CheckListBody = (props) => {
 
   const dispatch = useDispatch();
 
-  // const [checkItemsList, dispatchCheckItems] = useReducer(reducer, []);
-
-  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
-    useContext(Context);
-
   const [isTaskAddVisible, setIsTaskAddVisible] = useState(true);
   const [checkItemName, setCheckItemName] = useState("");
-  const [totalCheckedItems, setTotalCheckedItems] = useState(0);
 
   useEffect(() => {
     dispatch(gettingCheckItems(checkListId));
   }, []);
 
   const checkitemsData = useSelector((state) => state.checkitems.data);
-
-  // if (checkitemsData[checkListId]) {
-  //   setTotalCheckedItems(0);
-  //   checkitemsData[checkListId].map((checkItem) => {
-  //     if (checkItem.state === "complete") {
-  //       setTotalCheckedItems((val) => val + 1);
-  //     }
-  //   });
-  // }
+  const checkitemsCompleted = useSelector(
+    (state) => state.checkitems.completedItems
+  );
 
   function handleCheckListArchive(data) {
     dispatch(
@@ -57,15 +45,13 @@ const CheckListBody = (props) => {
     dispatch(addCheckitem({ id: checkListId, data: data }));
   }
 
-  let width;
-  // if (checkItemsList.length !== 0) {
-  //   width = (totalCheckedItems / checkItemsList.length) * 100;
-  //   width = Math.floor(width);
-  //   width = width + "%";
-  // }
-
-  if (handleError) {
-    return <div>{handleError}</div>;
+  let width = 0;
+  if (checkitemsData[checkListId]) {
+    width =
+      (checkitemsCompleted[checkListId] / checkitemsData[checkListId].length) *
+      100;
+    width = Math.floor(width);
+    width = width + "%";
   }
 
   return (
@@ -92,11 +78,7 @@ const CheckListBody = (props) => {
         <button
           className=' flex-grow-0 bg-slate-200 text-sm font-medium px-2 py-1 rounded-md'
           onClick={() => {
-            deletingCheckListInACard(
-              checkListId,
-              handleCheckListArchive,
-              setHandleError
-            );
+            deletingCheckListInACard(checkListId, handleCheckListArchive);
           }}
         >
           Delete
@@ -136,8 +118,6 @@ const CheckListBody = (props) => {
               itemId={checkItem.id}
               taskName={checkItem.name}
               taskState={checkItem.state}
-              setTotalCheckedItems={setTotalCheckedItems}
-              // handleUpdateCheckItem={handleUpdateCheckItem}
             />
           ))}
       </div>
@@ -163,8 +143,8 @@ const CheckListBody = (props) => {
                 creatingCheckItems(
                   checkListId,
                   checkItemName,
-                  handleCreatingCheckItem,
-                  setHandleError
+                  handleCreatingCheckItem
+                  // setHandleError
                 );
               }}
             >

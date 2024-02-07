@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useEffect, useState } from "react";
-import { Context } from "../App";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import List from "./List";
 import AddListDrop from "./AddListDrop";
@@ -15,15 +14,15 @@ const Lists = () => {
 
   const dispatch = useDispatch();
 
-  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
-    useContext(Context);
-
   const boardsData = useSelector((state) => state.boards.data);
+
+  const fetchingOp = useSelector((state) => state.operations.fetching);
+
+  const listsLoading = useSelector((state) => state.lists.loading);
   const listsData = useSelector((state) => state.lists.data);
+  const listsError = useSelector((state) => state.lists.error);
 
   const [cardIdForCardDetail, setCardIdForCardDetail] = useState("");
-  const [cardNameInCardDetail, setCardNameInCardDetail] = useState("");
-  const [listNameInCardDetail, setListNameInCardDetail] = useState("");
   const [listIdInCardDetail, setListIdInCardDetail] = useState("");
   const [isCardDetailVisible, setIsCardDetailVisible] = useState(false);
 
@@ -33,11 +32,7 @@ const Lists = () => {
 
   useEffect(() => {
     dispatch(getListsOfABoard(id));
-  }, [id]);
-
-  if (handleError) {
-    return <div>{handleError}</div>;
-  }
+  }, []);
 
   return (
     <>
@@ -144,31 +139,30 @@ const Lists = () => {
                 : {}
             }
           >
-            {listsData ? (
-              listsData.map((list) => (
-                <List
-                  key={list.id}
-                  listId={list.id}
-                  setListIdInCardDetail={setListIdInCardDetail}
-                  listName={list.name}
-                  setCardIdForCardDetail={setCardIdForCardDetail}
-                  setListNameInCardDetail={setListNameInCardDetail}
-                  setCardNameInCardDetail={setCardNameInCardDetail}
-                  setIsCardDetailVisible={setIsCardDetailVisible}
-                />
-              ))
+            {listsLoading && fetchingOp ? (
+              <div>Loading Lists..</div>
+            ) : fetchingOp && listsError !== "" ? (
+              <div className=' text-red-600'>{listsError}</div>
             ) : (
-              <></>
+              <>
+                {listsData.map((list) => (
+                  <List
+                    key={list.id}
+                    listId={list.id}
+                    setListIdInCardDetail={setListIdInCardDetail}
+                    listName={list.name}
+                    setCardIdForCardDetail={setCardIdForCardDetail}
+                    setIsCardDetailVisible={setIsCardDetailVisible}
+                  />
+                ))}
+                <AddListDrop boardId={id} />
+              </>
             )}
-            <AddListDrop boardId={id} />
           </div>
         </div>
         {isCardDetailVisible ? (
           <CardDetail
-            listIdInCardDetail={listIdInCardDetail}
             cardIdForCardDetail={cardIdForCardDetail}
-            listNameInCardDetail={listNameInCardDetail}
-            cardNameInCardDetail={cardNameInCardDetail}
             isCardDetailVisible={isCardDetailVisible}
             setIsCardDetailVisible={setIsCardDetailVisible}
           />

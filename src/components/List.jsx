@@ -3,12 +3,9 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useContext } from "react";
-import { Context } from "../App";
 import ListActionsDrop from "./ListActionsDrop";
 import Card from "./Card";
 import { getCardsOfAList, creatingCardsInAList } from "./API";
-import { addCard } from "../redux/cardsSlice";
 
 const List = (props) => {
   const {
@@ -16,52 +13,50 @@ const List = (props) => {
     setListIdInCardDetail,
     listName,
     setCardIdForCardDetail,
-    setListNameInCardDetail,
-    setCardNameInCardDetail,
     setIsCardDetailVisible,
   } = props;
 
   const dispatch = useDispatch();
-  const cardsData = useSelector((state) => state.cards.data);
 
-  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
-    useContext(Context);
+  const fetchingOp = useSelector((state) => state.operations.fetching);
+  const creatingOp = useSelector((state) => state.operations.creating);
+  const archivingOp = useSelector((state) => state.operations.deleting);
+
+  const cardsLoading = useSelector((state) => state.cards.loading);
+  const cardsData = useSelector((state) => state.cards.data);
+  const cardsError = useSelector((state) => state.cards.error);
+
+  const cardDetails = useSelector((state) => state.cards.cardDetails);
 
   const [cardName, setCardName] = useState("");
   const [listActionDrop, setListActionDrop] = useState(false);
   const [isAddCardDrop, setIsAddCardDrop] = useState(false);
+  const [clickedListId, setClickedListId] = useState("");
 
   useEffect(() => {
     dispatch(getCardsOfAList(listId));
-  }, [listId, cardName]);
-
-  function handleAddCard(data) {
-    dispatch(addCard({ id: listId, data: data }));
-  }
-
-  if (handleError) {
-    return <div>{handleError}</div>;
-  }
+  }, []);
 
   return (
     <>
       <div
         className='w-72 bg-slate-100 p-2 rounded-md shadow-lg flex flex-col justify-center self-start flex-shrink-0'
         onClick={() => {
-          setListNameInCardDetail(listName);
           setListIdInCardDetail(listId);
         }}
       >
         <header className='flex items-center justify-between ps-3 pe-2 desktop: h-5'>
           <h3 className='text-black font-medium'>{listName}</h3>
           {/* <input type='text' className=' bg-slate-300' /> */}
-          <button
-            className='text-slate-700 cursor-pointer'
-            onClick={() => {
-              setListActionDrop(!listActionDrop);
-            }}
-          >
-            <div className='relative'>...</div>
+          <button className='text-slate-700 cursor-pointer'>
+            <div
+              className='relative'
+              onClick={(e) => {
+                setListActionDrop(!listActionDrop);
+              }}
+            >
+              ...
+            </div>
             {listActionDrop ? (
               <ListActionsDrop
                 listId={listId}
@@ -74,18 +69,32 @@ const List = (props) => {
           </button>
         </header>
 
-        <div id='cards' className='mt-3'>
-          {cardsData[listId] &&
+        <div className='mt-3'>
+          {cardsLoading === true && fetchingOp && !cardsData[listId] ? (
+            <div className='text-green-600'>Cards Loading...</div>
+          ) : cardsError && fetchingOp ? (
+            <div className='text-red-600'>{cardsError}</div>
+          ) : cardDetails.listId === listId && archivingOp && cardsError ? (
+            <div className='text-red-600'>Error while archiving the card!!</div>
+          ) : cardDetails.listId === listId && archivingOp && cardsLoading ? (
+            <div className='text-green-600'>Archiving the card</div>
+          ) : listId === clickedListId && creatingOp && cardsLoading ? (
+            <div className='text-green-600'>Creating Card...</div>
+          ) : (
+            cardsData[listId] &&
             cardsData[listId].map((card) => (
-              <Card
-                key={card.id}
-                cardId={card.id}
-                cardName={card.name}
-                setCardIdForCardDetail={setCardIdForCardDetail}
-                setCardNameInCardDetail={setCardNameInCardDetail}
-                setIsCardDetailVisible={setIsCardDetailVisible}
-              />
-            ))}
+              <>
+                <Card
+                  key={card.id}
+                  listId={listId}
+                  cardId={card.id}
+                  cardName={card.name}
+                  setCardIdForCardDetail={setCardIdForCardDetail}
+                  setIsCardDetailVisible={setIsCardDetailVisible}
+                />
+              </>
+            ))
+          )}
         </div>
 
         <footer className='flex text-black mt-4 '>
@@ -108,13 +117,9 @@ const List = (props) => {
                   className=' bg-blue-600 px-2 py-1 text-white text-sm font-medium rounded-md focus:clear-none'
                   disabled={cardName === "" || cardName.trim() === ""}
                   onClick={() => {
-                    creatingCardsInAList(
-                      listId,
-                      cardName,
-                      setCardName,
-                      handleAddCard,
-                      setHandleError
-                    );
+                    setClickedListId(listId);
+                    dispatch(creatingCardsInAList(listId, cardName));
+                    setCardName("");
                   }}
                 >
                   Add card

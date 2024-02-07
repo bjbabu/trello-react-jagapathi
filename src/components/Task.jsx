@@ -2,30 +2,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import { useContext } from "react";
-import { Context } from "../App";
 import { deletingCheckItem, updatingCheckItem } from "./API";
 import { deleteCheckItem, updateCheckItem } from "../redux/checkitemsSlice";
 import { useDispatch } from "react-redux";
 
 const Task = (props) => {
-  const {
-    cardIdForCardDetail,
-    checkListId,
-    itemId,
-    taskName,
-    taskState,
-    setTotalCheckedItems,
-    // handleUpdateCheckItem,
-  } = props;
-
-  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
-    useContext(Context);
+  const { cardIdForCardDetail, checkListId, itemId, taskName, taskState } =
+    props;
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    updatingCheckItem(cardIdForCardDetail, itemId, taskState, setHandleError);
+    updatingCheckItem(cardIdForCardDetail, itemId, taskState);
   }, [taskState]);
 
   function handleDeleteCheckItem(data) {
@@ -34,9 +22,9 @@ const Task = (props) => {
     );
   }
 
-  if (handleError) {
-    return <div>{handleError}</div>;
-  }
+  // if (handleError) {
+  //   return <div>{handleError}</div>;
+  // }
 
   return (
     <div className='ps-2 flex items-center my-2 '>
@@ -47,15 +35,9 @@ const Task = (props) => {
         id=''
         className=' w-4 h-4 flex-grow-0 cursor-pointer'
         onClick={() => {
-          // handleUpdateCheckItem(itemId);
           dispatch(
             updateCheckItem({ checkListId: checkListId, checkItemId: itemId })
           );
-          if (taskState === "complete") {
-            setTotalCheckedItems((val) => val - 1);
-          } else {
-            setTotalCheckedItems((val) => val + 1);
-          }
         }}
       />
       <div
@@ -75,12 +57,7 @@ const Task = (props) => {
         <div
           className='ms-3'
           onClick={() => {
-            deletingCheckItem(
-              checkListId,
-              itemId,
-              handleDeleteCheckItem,
-              setHandleError
-            );
+            deletingCheckItem(checkListId, itemId, handleDeleteCheckItem);
           }}
         >
           <svg

@@ -17,6 +17,16 @@ const checkitemsSlice = createSlice({
     fetchCheckitemsSuccess: (state, action) => {
       state.loading = false;
       state.data = { ...state.data, [action.payload.id]: action.payload.data };
+      let count = 0;
+      action.payload.data.map((checkitem) => {
+        if (checkitem.state === "complete") {
+          count++;
+        }
+      });
+      state.completedItems = {
+        ...state.completedItems,
+        [action.payload.id]: count,
+      };
     },
     fetchCheckitemsFailure: (state, action) => {
       state.loading = false;
@@ -37,8 +47,10 @@ const checkitemsSlice = createSlice({
       const temp = state.data[action.payload.checkListId].map((checkitem) => {
         if (checkitem.id === action.payload.checkItemId) {
           if (checkitem.state === "complete") {
+            state.completedItems[action.payload.checkListId]--;
             return { ...checkitem, state: "incomplete" };
           } else {
+            state.completedItems[action.payload.checkListId]++;
             return { ...checkitem, state: "complete" };
           }
         } else {
@@ -50,8 +62,17 @@ const checkitemsSlice = createSlice({
     },
     deleteCheckItem: (state, action) => {
       state.loading = false;
+
       const temp = state.data[action.payload.checkListId].filter(
         (checkitem) => {
+          if (checkitem.id === action.payload.checkItemId) {
+            if (
+              state.completedItems[action.payload.checkListId] !== 0 &&
+              checkitem.state === "complete"
+            ) {
+              state.completedItems[action.payload.checkListId]--;
+            }
+          }
           return checkitem.id !== action.payload.checkItemId;
         }
       );

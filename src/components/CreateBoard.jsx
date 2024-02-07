@@ -1,26 +1,17 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useContext, useEffect, useRef } from "react";
 import { useState } from "react";
 import { createBoard } from "./API";
 import { useNavigate } from "react-router-dom";
-import { Context } from "../App";
 import { useDispatch } from "react-redux";
-import { addBoard } from "../redux/boardsSlice";
 
 const CreateBoard = (props) => {
   const navigate = useNavigate();
   const { isCreateBoardVisible, setIsCreateBoardVisible } = props;
 
-  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
-    useContext(Context);
   const [boardName, setBoardName] = useState("");
 
   const dispatch = useDispatch();
-
-  if (handleError) {
-    return <div>{handleError}</div>;
-  }
 
   return (
     <div className=' absolute w-72 px-2 bg-white rounded-md shadow-lg flex flex-col items-center text-sm -top-12 left-52'>
@@ -69,10 +60,7 @@ const CreateBoard = (props) => {
           }
           disabled={boardName === "" || boardName.trim() === ""}
           onClick={() => {
-            createBoard(boardName, setHandleError).then((res) => {
-              dispatch(addBoard(res.data));
-              navigate(`/boards/${res.data.id}`);
-            });
+            dispatch(createBoard(boardName, navigate));
           }}
         >
           Create

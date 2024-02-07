@@ -1,32 +1,21 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
-import { useContext } from "react";
-import { Context } from "../App";
+import { useState } from "react";
 import { creatingList } from "./API";
-import { addList } from "../redux/listsSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const AddListDrop = (props) => {
   const { boardId } = props;
 
-  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
-    useContext(Context);
-
   const dispatch = useDispatch();
+
+  const creatingOp = useSelector((state) => state.operations.creating);
+
+  const listsLoading = useSelector((state) => state.lists.loading);
+  const listsError = useSelector((state) => state.lists.error);
 
   const [isDrop, setIsDrop] = useState(false);
   const [listName, setListName] = useState("");
-
-  function handleData(data) {
-    setIsDrop(!isDrop);
-    setListName("");
-    dispatch(addList(data));
-  }
-
-  if (handleError) {
-    return <div>{handleError}</div>;
-  }
 
   return (
     <>
@@ -38,7 +27,15 @@ const AddListDrop = (props) => {
             : { height: "2rem", backgroundColor: "rgba(236,236,236,0.3)" }
         }
       >
-        {isDrop ? (
+        {listsError && creatingOp ? (
+          <div className='text-red-600 text-center bg-white w-full rounded-md'>
+            {listsError}
+          </div>
+        ) : listsLoading === true && creatingOp ? (
+          <div className=' text-green-700 text-center bg-white w-full rounded-md'>
+            Adding new list....
+          </div>
+        ) : isDrop ? (
           <div>
             <input
               autoFocus
@@ -55,7 +52,9 @@ const AddListDrop = (props) => {
                 className=' bg-blue-600 p-2 rounded-md m-1'
                 disabled={listName === ""}
                 onClick={() => {
-                  creatingList(boardId, listName, handleData, setHandleError);
+                  setIsDrop(!isDrop);
+                  setListName("");
+                  dispatch(creatingList(boardId, listName));
                 }}
               >
                 Add list

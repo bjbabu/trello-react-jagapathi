@@ -1,25 +1,21 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import Board from "./Board";
 import BoardShimmer from "./BoardShimmer";
 import CreateBoard from "./CreateBoard";
-import { Context } from "../App";
 
 import { Link } from "react-router-dom";
 
 const BoardsBody = () => {
-  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
-    useContext(Context);
+  const fetchingOp = useSelector((state) => state.operations.fetching);
 
   const boardsData = useSelector((state) => state.boards.data);
+  const handleError = useSelector((state) => state.boards.error);
+  const loading = useSelector((state) => state.boards.loading);
 
   const [isCreateBoardVisible, setIsCreateBoardVisible] = useState(false);
-
-  if (handleError) {
-    return <div>{handleError}</div>;
-  }
 
   return (
     <>
@@ -50,7 +46,23 @@ const BoardsBody = () => {
                 <h3 className='font-semibold'>Trello Workspace</h3>
               </div>
               <div className=''>
-                {boardsData.length !== 0 ? (
+                {loading && fetchingOp ? (
+                  <ul className=' flex flex-wrap gap-4'>
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                    <BoardShimmer />
+                  </ul>
+                ) : handleError && fetchingOp ? (
+                  <div className=' text-red-600'>{handleError}</div>
+                ) : (
                   <ul className=' flex flex-wrap'>
                     {boardsData.map((board) => (
                       <Link key={board.id} to={`/boards/${board.id}`}>
@@ -85,20 +97,6 @@ const BoardsBody = () => {
                         />
                       )}
                     </li>
-                  </ul>
-                ) : (
-                  <ul className=' flex flex-wrap gap-4'>
-                    <BoardShimmer />
-                    <BoardShimmer />
-                    <BoardShimmer />
-                    <BoardShimmer />
-                    <BoardShimmer />
-                    <BoardShimmer />
-                    <BoardShimmer />
-                    <BoardShimmer />
-                    <BoardShimmer />
-                    <BoardShimmer />
-                    <BoardShimmer />
                   </ul>
                 )}
               </div>

@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import operationsReducer from "./operationsSlice";
 import boardReducer from "./boardsSlice";
 import listsReducer from "./listsSlice";
 import cardsReducer from "./cardsSlice";
@@ -7,6 +8,7 @@ import checkitemsReducer from "./checkitemsSlice";
 
 export const store = configureStore({
   reducer: {
+    operations: operationsReducer,
     boards: boardReducer,
     lists: listsReducer,
     cards: cardsReducer,

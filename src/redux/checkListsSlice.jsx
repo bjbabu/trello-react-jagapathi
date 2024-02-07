@@ -1,6 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = { loading: false, data: {}, error: "" };
+const initialState = {
+  loading: false,
+  data: {},
+  error: "",
+};
 
 const checkListsSlice = createSlice({
   name: "checklists",
@@ -12,7 +16,6 @@ const checkListsSlice = createSlice({
     fetchCheckListsSuccess: (state, action) => {
       state.loading = false;
       state.data = { ...state.data, [action.payload.id]: action.payload.data };
-      console.log(action.payload.data);
       state.error = "";
     },
     fetchCheckListsFailure: (state, action) => {
@@ -37,7 +40,6 @@ const checkListsSlice = createSlice({
 
       state.data[action.payload.cardId] = temp;
     },
-    updateCheckItems: (state, action) => {},
   },
 });
 

@@ -1,44 +1,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useEffect, useState, useContext, useReducer } from "react";
-import { Context } from "../App";
+import { useState } from "react";
 import CheckListPop from "./CheckListPop";
 import CheckListBody from "./CheckListBody";
-import { deletingACardInAList, gettingChecklistsInACard } from "./API";
+import { deletingACardInAList } from "./API";
 import { archiveCard } from "../redux/cardsSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const CardDetail = (props) => {
-  const {
-    listIdInCardDetail,
-    cardIdForCardDetail,
-    listNameInCardDetail,
-    cardNameInCardDetail,
-    isCardDetailVisible,
-    setIsCardDetailVisible,
-  } = props;
+  const { cardIdForCardDetail, isCardDetailVisible, setIsCardDetailVisible } =
+    props;
 
   const dispatch = useDispatch();
-
-  const [listOfBoards, setListOfBoards, handleError, setHandleError] =
-    useContext(Context);
 
   const [isCheckListPopVisible, setIsCheckListPopVisible] = useState(false);
   const [checkListName, setCheckListName] = useState("Checklist");
 
   const checkListsData = useSelector((state) => state.checkLists.data);
-  console.log(checkListsData);
 
-  function handleArchiveCard(data) {
-    dispatch(
-      archiveCard({ listId: listIdInCardDetail, cardId: cardIdForCardDetail })
-    );
-  }
-
-  if (handleError) {
-    return <div>{handleError}</div>;
-  }
+  const cardDetails = useSelector((state) => state.cards.cardDetails);
+  const listsData = useSelector((state) => state.lists.data);
+  const list = listsData.filter((list) => {
+    return list.id === cardDetails.listId;
+  });
 
   return (
     <>
@@ -63,10 +48,9 @@ const CardDetail = (props) => {
               </svg>
             </div>
             <div className=' flex-grow ps-3'>
-              <h3 className='font-semibold text-xl'>{cardNameInCardDetail}</h3>{" "}
+              <h3 className='font-semibold text-xl'>{cardDetails.cardName}</h3>{" "}
               <h4 className='text-sm'>
-                in List{" "}
-                <span className=' underline'>{listNameInCardDetail}</span>
+                in List <span className=' underline'>{list[0].name}</span>
               </h4>
             </div>
             <div
@@ -134,10 +118,11 @@ const CardDetail = (props) => {
                 <div
                   className='p-1 bg-slate-200 rounded-md my-2 flex items-center cursor-pointer'
                   onClick={() => {
-                    deletingACardInAList(
-                      cardIdForCardDetail,
-                      handleArchiveCard,
-                      setHandleError
+                    dispatch(
+                      deletingACardInAList(
+                        cardDetails.cardId,
+                        cardDetails.listId
+                      )
                     );
                     setIsCardDetailVisible(false);
                   }}

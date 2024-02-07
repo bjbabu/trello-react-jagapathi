@@ -22,13 +22,6 @@ function App() {
     dispatch(getBoards(id));
   }, []);
 
-  // const boardsData = useSelector((state) => state.boards);
-  // console.log(boardsData);
-
-  // function handleData(data) {
-  //   setListOfBoards(data);
-  // }
-
   return (
     <>
       <Context.Provider

@@ -16,15 +16,16 @@ const listsSlice = createSlice({
     },
     fetchListsFailure: (state, action) => {
       state.loading = false;
-      state.data = [];
       state.error = action.payload;
     },
     addList: (state, action) => {
+      state.loading = false;
       state.data = [...state.data, action.payload];
     },
     archiveList: (state, action) => {
+      state.loading = false;
       const temp = state.data.filter((list) => {
-        return list.id !== action.payload;
+        return list.id !== action.payload.id;
       });
       state.data = temp;
     },
